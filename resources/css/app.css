@@ -61,6 +61,13 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
+.clr-main {
+    color: #00C896;
+}
+
+.bg-main {
+    background-color: #00C896;
+}
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
