@@ -22,4 +22,14 @@ class Turniej extends Model
         'opis',
         'komunikat_path'
     ];
+
+    public function organizator()
+    {
+        return $this->belongsTo(User::class, 'organizator_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(TurniejStatus::class, 'status_id');
+    }
 }
