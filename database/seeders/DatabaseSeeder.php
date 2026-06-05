@@ -16,8 +16,15 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Kuba',
+            'email' => 'kuba@turnieje.pl',
+            'password' => bcrypt('kuba1234'),
         ]);
+
+        $this->call([
+            TurniejStatusSeeder::class,
+            TurniejSeeder::class,
+        ]);
+
     }
 }
