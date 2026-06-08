@@ -38,6 +38,16 @@
                     <input type="text" name="tempo_gry" placeholder="Tempo gry (np. 5+0)" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white" required>
                 </p>
                 <p>
+                    <label for="status_id" class="block mb-2 text-sm font-medium text-gray-300">Status*</label>
+                    <select name="status_id" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white" required>
+                        @foreach($turniej_statusy as $status)
+                            <option value="{{ $status->id }}">
+                                {{ $status->nazwa }}
+                            </option>
+                        @endforeach
+                    </select>
+                </p>
+                <p>
                     <label for="opis" class="block mb-2 text-sm font-medium text-gray-300">Opis</label>
                     <textarea name="opis" rows="4" placeholder="Opis turnieju" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white"></textarea>
                 </p>
@@ -47,7 +57,7 @@
                 </p>
                 <p>
                     <input type="submit" value="Utwórz turniej" class="w-full p-2 mb-4 border rounded-lg bg-main text-white cursor-pointer">
-                    <input type="button" value="Anuluj" onclick="window.history.back();" class="w-full p-2 mb-4 border rounded-lg bg-red-500 text-white cursor-pointer">
+                    <input type="button" value="Anuluj" onclick="window.history.back();" class="w-full p-2 mb-4 border rounded-lg text-white cursor-pointer">
                 </p>
             </div>
         </form>

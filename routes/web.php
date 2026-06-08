@@ -11,7 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('turnieje', TurniejController::class)
         ->parameters(['turnieje' => 'turniej']) // zmiana nazwy parametru na l.poj.
-        ->only(['index', 'create', 'store', 'show']);
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
 
         
 

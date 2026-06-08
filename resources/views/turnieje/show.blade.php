@@ -1,7 +1,7 @@
 @include('partials.turniej-nav')
 
 {{-- zawartość --}}
-<x-layouts::app :title="$turniej->nazwa">
+<x-layouts::app :title="$turniej->nazwa" >
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
 
         <h1 class="text-2xl font-bold tracking-tight">{{ $turniej->nazwa }}</h1>
