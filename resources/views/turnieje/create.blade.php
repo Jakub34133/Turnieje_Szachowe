@@ -8,7 +8,7 @@
         <form action="{{ route('turnieje.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="p-4 m-4 rounded-lg border border-gray-200 max-w-md mx-auto">
-                    <p>
+                <p>
                     <label for="nazwa" class="block mb-2 text-sm font-medium text-gray-300">Nazwa turnieju*</label>
                     <input type="text" name="nazwa" placeholder="Nazwa turnieju" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white" required>
                 </p>

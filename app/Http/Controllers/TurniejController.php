@@ -7,18 +7,29 @@ use App\Models\TurniejStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use alert;
 
 class TurniejController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $turnieje = Turniej::all();
+        $turnieje = Turniej::query()
+            ->when($request->filled('nazwa'), function ($query) use ($request) {
+                $query->where('nazwa', 'like', '%' . $request->input('nazwa') . '%');
+            })
+            ->when($request->filled('status_id'), function ($query) use ($request) {
+                $query->where('status_id', $request->input('status_id'));
+            })
+            ->orderBy('data_rozpoczecia', 'desc')
+            ->get();
+
+        $turniej_statusy = TurniejStatus::all();
+
         return view('turnieje.index', [
-            'turnieje' => $turnieje
+            'turnieje' => $turnieje,
+            'turniej_statusy' => $turniej_statusy,
         ]);
     }
 
