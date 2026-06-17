@@ -32,4 +32,9 @@ class Turniej extends Model
     {
         return $this->belongsTo(TurniejStatus::class, 'status_id');
     }
+
+    public function zgloszenia()
+    {
+        return $this->hasMany(Zgloszenie::class, 'turniej_id');
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TurniejController;
+use App\Http\Controllers\ZgloszenieController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -13,7 +14,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters(['turnieje' => 'turniej']) // zmiana nazwy parametru na l.poj.
         ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
 
-        
+    Route::resource('turnieje.zgloszenia', ZgloszenieController::class)
+        ->parameters([
+            'turnieje' => 'turniej',
+            'zgloszenia' => 'zgloszenie',
+        ])
+        ->only(['index', 'create', 'store']);
+    
+    Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/approve', [ZgloszenieController::class, 'approve'])->name('turnieje.zgloszenia.approve');
+    Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/reject', [ZgloszenieController::class, 'reject'])->name('turnieje.zgloszenia.reject');
 
 });
 
