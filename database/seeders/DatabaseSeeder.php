@@ -15,17 +15,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Kuba',
-            'email' => 'kuba@turnieje.pl',
-            'password' => bcrypt('kuba1234'),
-        ]);
-
         $this->call([
+            UserSeeder::class,
             TurniejStatusSeeder::class,
             TurniejSeeder::class,
             ZgloszenieStatusSeeder::class,
             ZgloszenieSeeder::class,
+            TurniejZawodnikSeeder::class,
         ]);
 
     }

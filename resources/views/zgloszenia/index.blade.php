@@ -13,7 +13,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        
+
         <div class="px-4 flex items-center justify-between">
             <h1 class="text-2xl font-bold tracking-tight">{{ __('Zgłoszenia') }}</h1>
         </div>
@@ -43,6 +43,9 @@
             </div>
         </form>
         <div>
+            @if ($zgloszenia->isEmpty())
+                <p class="text-gray-300">Brak zgłoszeń do wyświetlenia.</p>
+            @endif
             @foreach ($zgloszenia as $zgloszenie)
                 <div class="block p-2 m-2 flex justify-between rounded-lg border border-gray-200 hover:bg-gray-900 hover:cursor-pointer transition-colors">
                     <div class="p-2">

@@ -4,27 +4,37 @@
 <x-layouts::app :title="__('Dodaj zgłoszenie')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
 
-        <div class="px-4 flex items-center justify-between mx-auto">
-            <h1 class="text-2xl font-bold tracking-tight center">Dodaj zgłoszenie do turnieju</h1>
-        </div>
+        @if($zgloszenie != null && $zgloszenie->status_id == 1)
+            <div class="mx-4 rounded-lg border border-emerald-500 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+                Twoje zgłoszenie zostało wysłane
+            </div>
+        @elseif($zgloszenie != null && $zgloszenie->status_id == 2)
+            <div class="mx-4 rounded-lg border border-emerald-500 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+                Już uczestniczysz w tym turnieju
+            </div>
+        @else
+            <div class="px-4 flex items-center justify-between mx-auto">
+                <h1 class="text-2xl font-bold tracking-tight center">Dodaj zgłoszenie do turnieju</h1>
+            </div>
 
-        <div class="p-4 m-4 rounded-lg border border-gray-200 max-w-md min-w-md mx-auto">
+            <div class="p-4 m-4 rounded-lg border border-gray-200 max-w-md min-w-md mx-auto">
 
-            <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('POST')
-                    
-                    <p>
-                        <label for="komentarz" class="block mb-2 text-sm font-medium text-gray-300">Komentarz</label>
-                        <textarea name="komentarz" rows="4" placeholder="Komentarz" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white"></textarea>
-                    </p>
-                    
-                    <p>
-                        <input type="submit" value="Zgłoś się" class="w-full p-2 mb-4 border rounded-lg bg-main text-white cursor-pointer">
-                        <input type="button" value="Anuluj" onclick="window.history.back();" class="w-full p-2 mb-4 border rounded-lg text-white cursor-pointer">
-                    </p>
-            </form>
-        </div>
+                <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('POST')
+                        
+                        <p>
+                            <label for="komentarz" class="block mb-2 text-sm font-medium text-gray-300">Komentarz</label>
+                            <textarea name="komentarz" rows="4" placeholder="Komentarz" class="w-full p-2 mb-4 border rounded-lg bg-gray-800 text-white"></textarea>
+                        </p>
+                        
+                        <p>
+                            <input type="submit" value="Zgłoś się" class="w-full p-2 mb-4 border rounded-lg bg-main text-white cursor-pointer">
+                            <input type="button" value="Anuluj" onclick="window.history.back();" class="w-full p-2 mb-4 border rounded-lg text-white cursor-pointer">
+                        </p>
+                </form>
+            </div>
+        @endif
 
     </div>
 </x-layouts::app>

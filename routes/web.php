@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TurniejController;
+use App\Http\Controllers\ZawodnikController;
 use App\Http\Controllers\ZgloszenieController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/approve', [ZgloszenieController::class, 'approve'])->name('turnieje.zgloszenia.approve');
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/reject', [ZgloszenieController::class, 'reject'])->name('turnieje.zgloszenia.reject');
 
+    Route::resource('turnieje.zawodnicy', ZawodnikController::class)
+        ->parameters([
+            'turnieje' => 'turniej',
+        ])
+        ->only(['index']);
 });
 
 require __DIR__.'/settings.php';

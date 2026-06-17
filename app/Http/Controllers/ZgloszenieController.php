@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Turniej;
+use App\Models\TurniejZawodnik;
 use App\Models\Zgloszenie;
 use App\Models\ZgloszenieStatus;
 use Illuminate\Http\Request;
@@ -44,8 +45,15 @@ class ZgloszenieController extends Controller
      */
     public function create(Turniej $turniej)
     {
+        // sprawdz czy zalogowany uzytkownik złożył zgłoszenie, które ma status wysłane lub zatwierdzone
+        $zgloszenie = Zgloszenie::where('zawodnik_id', '=', auth()->id())
+            ->where('turniej_id', '=', $turniej->id)
+            ->orderBy('data_wyslania', 'desc')
+            ->first();
+
         return view('zgloszenia.create', [
             'turniej' => $turniej,
+            'zgloszenie' => $zgloszenie,
         ]);
     }
 
@@ -65,7 +73,7 @@ class ZgloszenieController extends Controller
 
         Zgloszenie::create($validatedData);
 
-        return redirect()->route('turnieje.show', $request->turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
+        return redirect()->route('turnieje.zgloszenia.create', $request->turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
     }
 
     /**
@@ -111,6 +119,12 @@ class ZgloszenieController extends Controller
 
         $turniej->liczba_zawodnikow += 1; // zwiększenie liczby zawodników w turnieju
         $turniej->save();
+
+        TurniejZawodnik::create([
+            'turniej_id' => $turniej->id,
+            'zawodnik_id' => $zgloszenie->zawodnik_id,
+            'punkty' => 0,
+        ]);
 
         return redirect()->back()->with('success', 'Zgłoszenie zostało zatwierdzone.');
     }
