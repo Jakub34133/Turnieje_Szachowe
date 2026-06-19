@@ -51,6 +51,8 @@
                     <div class="p-2">
                         <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
                             <span class="inline-flex items-center gap-1"><flux:icon.user class="text-main"/> {{ $zgloszenie->zawodnik->name }}</span>
+                            <span class="inline-flex items-center gap-1 text-gray-400"> &lpar;ranking: {{ $zgloszenie->zawodnik->ranking_krajowy }},</span>
+                            <span class="inline-flex items-center gap-1 text-gray-400"> kategoria: {{ $zgloszenie->zawodnik->kategoria }}&rpar;</span>
                         </p>
                         <p class="pt-1 text-gray-300 flex items-center gap-3 overflow-x-auto">
                             <span class="inline-flex items-center gap-1"> {{ $zgloszenie->komentarz }}</span>

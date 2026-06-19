@@ -27,6 +27,7 @@
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Miejsce</th>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Zawodnik</th>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Ranking krajowy</th>
+                        <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Kategoria</th>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Punkty</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $miejsce++ }}</td>
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->name }}</td>
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->ranking_krajowy }}</td>
+                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->kategoria }}</td>
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->punkty }}</td>
                     </tr>
                     

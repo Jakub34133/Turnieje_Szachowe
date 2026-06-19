@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'kuba@turnieje.pl',
             'password' => bcrypt('kuba1234'),
             'ranking_krajowy' => 1600,
+            'kategoria' => 'III',
         ]);
 
         User::factory()->create([
@@ -25,6 +26,7 @@ class UserSeeder extends Seeder
             'email' => 'adam@turnieje.pl',
             'password' => bcrypt('adam1234'),
             'ranking_krajowy' => 1400,
+            'kategoria' => 'IV',
         ]);
 
         User::factory()->create([
@@ -32,6 +34,7 @@ class UserSeeder extends Seeder
             'email' => 'tomasz@turnieje.pl',
             'password' => bcrypt('tomasz1234'),
             'ranking_krajowy' => 1624,
+            'kategoria' => 'III',
         ]);
 
         User::factory()->create([
@@ -39,6 +42,7 @@ class UserSeeder extends Seeder
             'email' => 'alicja@turnieje.pl',
             'password' => bcrypt('alicja1234'),
             'ranking_krajowy' => 0,
+            'kategoria' => 'brak',
         ]);
 
         User::factory()->create([
@@ -46,6 +50,7 @@ class UserSeeder extends Seeder
             'email' => 'marek@turnieje.pl',
             'password' => bcrypt('marek1234'),
             'ranking_krajowy' => 0,
+            'kategoria' => 'brak',
         ]);
     }
 }
