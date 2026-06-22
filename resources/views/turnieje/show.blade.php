@@ -1,59 +1,75 @@
 @include('partials.turniej-nav')
 
 {{-- zawartość --}}
-<x-layouts::app :title="$turniej->nazwa" >
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+<x-layouts::app :title="$turniej->nazwa">
+    <div class="p-4 rounded-lg flex w-full flex-1 flex-col glass">
 
-        <h1 class="text-2xl font-bold tracking-tight">{{ $turniej->nazwa }}</h1>
+        <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">{{ $turniej->nazwa }}</h1>
 
-        {{-- organizator --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.user-circle class="text-main"/> Organizator: {{ $turniej->organizator->name }}</span>
-        </p>
-        {{-- miejsce --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.map class="text-main"/> {{ $turniej->miejsce }}</span>
-        </p>
-        {{-- daty --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.calendar class="text-main"/> {{ $turniej->data_rozpoczecia }} - {{ $turniej->data_zakonczenia }}</span>
-        </p>
-        {{-- liczba rund --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.book-open class="text-main"/> {{ $turniej->liczba_rund }} rund</span>
-        </p>
-        {{-- liczba zawodników --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.user-group class="text-main"/> {{ $turniej->liczba_zawodnikow }} / {{ $turniej->limit_zawodnikow }} zawodników</span>
-        </p>
-        {{-- tempo gry --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.clock class="text-main"/>{{ $turniej->tempo_gry }}</span>
-        </p>
-
-        {{-- status --}}
-        <p class="text-white flex items-center gap-3 whitespace-nowrap overflow-x-auto">
-            <span class="inline-flex items-center gap-1"><flux:icon.forward class="text-main"/>{{ $turniej->status->nazwa }}</span>
-        </p>
-        {{-- opis --}}
-        @if($turniej->opis != null)
-            <p class="text-white flex gap-3 overflow-x-auto">
-                <span class="inline-flex gap-1"><flux:icon.chat-bubble-bottom-center-text class="text-main"/> {{ $turniej->opis }}</span>
+        <div class="grid grid-cols-2">
+            {{-- organizatorzy --}}
+            <p class="p-2 m-2 grid items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.user-circle class="text-main"/> Organizatorzy</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->organizator->name }}</span>
             </p>
-        @endif
-        {{-- komunikat --}}
-        @if($turniej->komunikat_path)
-            <p class="text-white flex gap-3 overflow-x-auto">
-                <span class="inline-flex gap-1"><flux:icon.document class="text-main"/>
-                    <a href="{{ Storage::url($turniej->komunikat_path) }}" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 rounded-md border border-main/40 bg-main/10 px-3 py-2 text-sm font-medium text-main hover:bg-main/20">
-                        <flux:icon.arrow-down-tray class="text-main" />
-                        Pobierz komunikat
-                    </a>
-                </span>
+            {{-- sędziowie --}}
+            <p class="p-2 m-2 grid items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.user-circle class="text-main"/> Sędziowie</span>
+                <span class="inline-flex items-center gap-1">XXX</span>
+            </p>
+            {{-- miejsce --}}
+            <p class="p-2 m-2 grid items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.map class="text-main"/> Miejsce</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->miejsce }}</span>
+            </p>
+            {{-- daty --}}
+            <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.calendar class="text-main"/> Data </span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->data_rozpoczecia }} - {{ $turniej->data_zakonczenia }}</span>
+            </p>
+            {{-- liczba rund --}}
+            <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.book-open class="text-main"/> Liczba rund</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->liczba_rund }}</span>
+            </p>
+            {{-- liczba zawodników --}}
+            <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.user-group class="text-main"/> Liczba zawodników</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->liczba_zawodnikow }} / {{ $turniej->limit_zawodnikow }}</span>
+            </p>
+            {{-- tempo gry --}}
+            <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.clock class="text-main"/>Tempo gry</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->tempo_gry }}</span>
             </p>
 
-        @endif
+            {{-- status --}}
+            <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass border-l-5 border-main">
+                <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.forward class="text-main"/>Status</span>
+                <span class="inline-flex items-center gap-1">{{ $turniej->status->nazwa }}</span>
+            </p>
+        </div>
 
+            {{-- opis --}}
+            @if($turniej->opis != null)
+                <p class="p-2 m-2 grid overflow-x-auto glass border-l-5 border-main">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.chat-bubble-bottom-center-text class="text-main"/> Opis</span>
+                    <span class="inline-flex items-center gap-1"> {{ $turniej->opis }}</span>
+                </p>
+            @endif
+            {{-- komunikat --}}
+            @if($turniej->komunikat_path)
+                <p class="p-2 m-2 grid overflow-x-auto glass border-l-5 border-main">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.document class="text-main"/> Komunikat</span>
+                    <span class="inline-flex items-center gap-1 pt-1">
+                        <a href="{{ Storage::url($turniej->komunikat_path) }}" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-md bg-black/20 px-3 py-2 text-sm font-medium hover:bg-white hover:text-black duration-200">
+                            <flux:icon.arrow-down-tray />
+                            Pobierz komunikat
+                        </a>
+                    </span>
+                </p>
+
+            @endif
     </div>
 </x-layouts::app>
