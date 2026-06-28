@@ -27,15 +27,17 @@
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 
+    /* Moje kolory */
     /* Main color */
-    --clr-main: #00C896;
+    --color-main: #00C896;
+    --color-main-2: #41896e;
 
-    /* Chessboard */
-    --bg-chessboard-l-1: #f3f3f3;
-    --bg-chessboard-l-2: #ededed;
+    /* Chessboard - light */
+    --bg-chessboard-1: #f3f3f3;
+    --bg-chessboard-2: #ededed;
 
-    --bg-chessboard-1: #232323;
-    --bg-chessboard-2: #1d1d1d;
+    /* Glassmorphism - light */
+    --bg-glass: rgba(0, 0, 0, 0.02);
 }
 
 @layer theme {
@@ -43,6 +45,13 @@
         --color-accent: var(--color-white);
         --color-accent-content: var(--color-white);
         --color-accent-foreground: var(--color-neutral-800);
+
+        /* Chessboard - dark */
+        --bg-chessboard-1: #232323;
+        --bg-chessboard-2: #1d1d1d;
+
+        /* Glassmorphism - dark */
+        --bg-glass: rgba(255, 255, 255, 0.05);
     }
 }
 
@@ -75,30 +84,27 @@ select:focus[data-flux-control] {
 /* Moje style
 /* -------------------------------------------------------- */
 
-/* Kolor główny */
-.text-main {
-    color: var(--clr-main);
-}
-
-.bg-main {
-    background-color: var(--clr-main);
-}
-
-.border-main {
-    border-color: var(--clr-main);
-}
-
-/* -------------------------------------------------------- */
-/* Motyw ciemny */
-/* -------------------------------------------------------- */
-
 /* Glassmorphism */
 
 .glass {
-    background-color: rgba(255,255,255,0.05);
-    box-shadow: 0 25px 25px rgba(0,0,0,0.2);
+    background-color: var(--bg-glass);
+    box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
     z-index: 10;
+}
+
+.glass-2 {
+    background-color: var(--bg-glass);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 7px solid var(--color-main);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    z-index: 15;
 }
 
 /* Tło - szachownica */
@@ -133,44 +139,4 @@ select:focus[data-flux-control] {
     100% {
         background-position: -2rem -2rem;
     }
-}
-
-/* -------------------------------------------------------- */
-/* Motyw jasny*/
-/* -------------------------------------------------------- */
-
-/* Glassmorphism */
-
-.glass-l {
-    background-color: rgba(0,0,0,0.05);
-    box-shadow: 0 25px 25px rgba(0,0,0,0.2);
-    backdrop-filter: blur(5px);
-    z-index: 10;
-}
-
-/* Tło - szachownica */
-.bg-chessboard-l {
-    background-size: 2rem 2rem;
-    background-color: var(--bg-chessboard-l-1);
-    background-image:
-        linear-gradient(
-            -45deg,
-            transparent 75%,
-            var(--bg-chessboard-l-2) 75%
-        ),
-        linear-gradient(
-            45deg,
-            transparent 75%,
-            var(--bg-chessboard-l-2) 75%
-        ),
-        linear-gradient(
-            -135deg,
-            transparent 75%,
-            var(--bg-chessboard-l-2) 75%
-        ),
-        linear-gradient(
-            135deg,
-            transparent 75%,
-            var(--bg-chessboard-l-2) 75%
-        );
 }
