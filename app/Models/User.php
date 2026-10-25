@@ -18,7 +18,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
         'name', 'email', 'password', 
         'plec', 'data_urodzenia',
         'fide_ranking_klasyczny', 'fide_ranking_szybkie', 'fide_ranking_blyskawiczne',
-        'pzszach_ranking', 'kategoria',
+        'pzszach_ranking', 'tytul',
         'fide_id', 'pzszach_id', 'klubowicz'
     ]
 )]
@@ -54,14 +54,6 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /* TODO: 
-        Dodać pola:
-        User(
-            płeć, data_urodzenia, 
-            fide_id, pzszach_id, 
-            is_member [czy należy do tego klubu],
-            fide_ranking_klasyczny, fide_ranking_szybkie, fide_ranking_blyskawiczne,
-            pzszach_ranking, 
-            obecny_tytul [skrót do tytułu, może być generowany na podstawie relacji])
 
         Tytul(
             zawodnik_id [tu pobrać posiadane tytuły do profilu],
