@@ -19,9 +19,16 @@
         </div>
         <flux:menu.separator />
         <flux:menu.radio.group>
-            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                {{ __('Settings') }}
+            <flux:menu.item :href="route('zawodnicy.show', ['zawodnik' => auth()->id()])" icon="user" wire:navigate>
+                {{ __('Profil') }}
             </flux:menu.item>
+            <flux:menu.item :href="route('profile.edit')" icon="bell" wire:navigate>
+                {{ __('Powiadomienia (0)') }}
+            </flux:menu.item>
+            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                {{ __('Ustawienia') }}
+            </flux:menu.item>
+            
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
                 <flux:menu.item
@@ -31,7 +38,7 @@
                     class="w-full cursor-pointer"
                     data-test="logout-button"
                 >
-                    {{ __('Log out') }}
+                    {{ __('Wyloguj') }}
                 </flux:menu.item>
             </form>
         </flux:menu.radio.group>

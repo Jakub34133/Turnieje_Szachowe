@@ -26,8 +26,8 @@
                     <tr>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Miejsce</th>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Zawodnik</th>
-                        <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Ranking krajowy</th>
-                        <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Kategoria</th>
+                        <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Ranking PZSzach</th>
+                        <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Tytuł</th>
                         <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Punkty</th>
                     </tr>
                 </thead>
@@ -41,8 +41,8 @@
                     <tr class="hover:bg-gray-700 {{ request('nazwa') && str_contains(strtolower($zawodnik->zawodnik->name), strtolower(request('nazwa'))) ? 'bg-gray-500' : '' }}">
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $miejsce++ }}</td>
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->name }}</td>
-                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->ranking_krajowy }}</td>
-                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->kategoria }}</td>
+                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->pzszach_ranking }}</td>
+                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->zawodnik->tytul }}</td>
                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->punkty }}</td>
                     </tr>
                     

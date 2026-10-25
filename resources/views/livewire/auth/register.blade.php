@@ -30,6 +30,24 @@
                 placeholder="email@example.com"
             />
 
+            <!-- Gender -->
+            <div>
+                <label for="plec" class="block text-sm font-medium">{{ __('Płeć') }}</label>
+                <select id="plec" name="plec" class="w-full" required>
+                    <option value="M" @selected(old('plec') === 'M')>{{ __('Mężczyzna') }}</option>
+                    <option value="K" @selected(old('plec') === 'K')>{{ __('Kobieta') }}</option>
+                </select>
+            </div>
+
+            <!-- Date of birth -->
+            <flux:input
+                name="data_urodzenia"
+                :label="__('Data urodzenia')"
+                :value="old('data_urodzenia')"
+                type="date"
+                required
+            />
+
             <!-- Password -->
             <flux:input
                 name="password"

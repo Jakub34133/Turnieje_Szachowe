@@ -19,6 +19,10 @@ class Profile extends Component
 
     public string $email = '';
 
+    public string $plec = '';
+
+    public string $data_urodzenia = '';
+
     /**
      * Mount the component.
      */
@@ -26,6 +30,8 @@ class Profile extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->plec = Auth::user()->plec;
+        $this->data_urodzenia = Auth::user()->data_urodzenia;
     }
 
     /**

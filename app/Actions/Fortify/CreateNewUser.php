@@ -28,6 +28,8 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'plec' => $input['plec'],
+            'data_urodzenia' => $input['data_urodzenia'],
         ]);
     }
 }

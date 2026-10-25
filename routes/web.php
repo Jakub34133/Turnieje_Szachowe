@@ -30,6 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'turnieje' => 'turniej',
         ])
         ->only(['index']);
+
+    Route::get('zawodnicy/{zawodnik}', [ZawodnikController::class, 'show'])->name('zawodnicy.show');
 });
 
 require __DIR__.'/settings.php';

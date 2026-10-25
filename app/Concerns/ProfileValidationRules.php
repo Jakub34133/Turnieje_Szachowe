@@ -18,6 +18,8 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'plec' => ['required', 'in:M,K'],
+            'data_urodzenia' => ['required', 'date', 'before_or_equal:today'],
         ];
     }
 

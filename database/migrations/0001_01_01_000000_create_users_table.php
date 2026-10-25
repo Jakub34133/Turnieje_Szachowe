@@ -19,8 +19,19 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->integer('ranking_krajowy')->default(0);
-            $table->string('kategoria')->default('brak');
+
+            $table->string('plec');
+            $table->date('data_urodzenia');
+
+            $table->integer('fide_ranking_klasyczny')->default(0);
+            $table->integer('fide_ranking_szybkie')->default(0);
+            $table->integer('fide_ranking_blyskawiczne')->default(0);
+            $table->integer('pzszach_ranking')->default(0);
+            $table->string('tytul')->default('brak'); // skrót dla tytułu (np. I, IV, GM)
+
+            $table->string('fide_id')->nullable();
+            $table->string('pzszach_id')->nullable();
+            $table->boolean('klubowicz')->default(false);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -37,6 +48,7 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+        
     }
 
     /**

@@ -13,7 +13,15 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(
+    [
+        'name', 'email', 'password', 
+        'plec', 'data_urodzenia',
+        'fide_ranking_klasyczny', 'fide_ranking_szybkie', 'fide_ranking_blyskawiczne',
+        'pzszach_ranking', 'kategoria',
+        'fide_id', 'pzszach_id', 'klubowicz'
+    ]
+)]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -44,4 +52,32 @@ class User extends Authenticatable implements PasskeyUser
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    /* TODO: 
+        Dodać pola:
+        User(
+            płeć, data_urodzenia, 
+            fide_id, pzszach_id, 
+            is_member [czy należy do tego klubu],
+            fide_ranking_klasyczny, fide_ranking_szybkie, fide_ranking_blyskawiczne,
+            pzszach_ranking, 
+            obecny_tytul [skrót do tytułu, może być generowany na podstawie relacji])
+
+        Tytul(
+            zawodnik_id [tu pobrać posiadane tytuły do profilu],
+            tytul_typ (kategoria_krajowa, tytul_fide)
+            nazwa (np. Kategoria I, IM, GM),
+            data_nadania,
+            numer_zaswiadczenia (opcjonalnie)
+            )
+
+        [Opcjonalne, na później do prowadzenia statystyk]
+        Ranking_Historia(
+            zawodnik_id,
+            federacja (PZSzach, FIDE),
+            tempo_gry (standard, szybkie, blitz),
+            ranking,
+            data_zdobycia
+        )
+      */
 }
