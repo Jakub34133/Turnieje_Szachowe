@@ -3,15 +3,16 @@
 
     <div class="p-4 flex w-full flex-1 flex-col">
         <div class="grid w-full grid-cols-4">
-            <a href="#" class="glass p-2" style="border-bottom: none">Profil</a>
+            <a href="{{ route('zawodnicy.show', $zawodnik) }}" class="glass p-2" style="border-bottom: none">Profil</a>
             <a href="#" class="glass-off p-2">Historia rankingu</a>
             <a href="#" class="glass-off p-2">Historia turniejów</a>
-            <a href="#" class="glass-off p-2">Historia tytułów</a>
+            <a href="{{ route('tytuly.index', $zawodnik) }}" class="glass-off p-2">Historia tytułów</a>
         </div>
         
         <div class="p-4 flex w-full flex-1 flex-col glass" style="border-top: none;">
 
             <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">{{ $zawodnik->name }}</h1>
+            <h2 class="m-2 p-2 pt-0 mt-0 text-l text-gray-300 tracking-tight">Profil użytkownika</h2>
 
             <div class="grid grid-cols-2">
                 {{-- Data urodzenia --}}
@@ -46,7 +47,7 @@
                         class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.trophy
                             class="text-main" />Tytuł</span>
                     <span
-                        class="inline-flex items-center gap-1">{{ $zawodnik->tytul }}</span>
+                        class="inline-flex items-center gap-1">{{ $tytul_top != null ? $tytul_top->nazwa : 'Brak' }}</span>
                 </p>
 
                 {{-- Ranking PZSzach --}}

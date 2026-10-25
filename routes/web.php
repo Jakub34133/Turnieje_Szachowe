@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TurniejController;
+use App\Http\Controllers\TytulController;
 use App\Http\Controllers\ZawodnikController;
 use App\Http\Controllers\ZgloszenieController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['index']);
 
     Route::get('zawodnicy/{zawodnik}', [ZawodnikController::class, 'show'])->name('zawodnicy.show');
+    Route::get('zawodnicy/{zawodnik}/tytuly', [TytulController::class, 'index'])->name('tytuly.index');
 });
 
 require __DIR__.'/settings.php';

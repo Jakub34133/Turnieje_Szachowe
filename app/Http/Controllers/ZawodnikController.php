@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Turniej;
 use App\Models\TurniejZawodnik;
+use App\Models\Tytul;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,10 +28,12 @@ class ZawodnikController extends Controller
 
     public function show(Request $request, User $zawodnik) {
 
-        $zawodnik = User::where('id', $zawodnik->id)->firstOrFail();
+        $tytul_top = Tytul::where('zawodnik_id', $zawodnik->id)
+            ->orderBy('data_nadania', 'desc')->first();
 
         return view('zawodnicy.show', [
-            'zawodnik' => $zawodnik
+            'zawodnik' => $zawodnik,
+            'tytul_top' => $tytul_top
         ]);
     }
 }
