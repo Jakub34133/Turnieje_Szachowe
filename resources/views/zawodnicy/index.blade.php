@@ -5,7 +5,7 @@
             <h1 class="text-2xl font-bold tracking-tight">{{ __('Wyniki') }}</h1>
 
         </div>
-        <form action="{{ route('turnieje.zawodnicy.index', $turniej) }}" method="GET">
+        <form action="{{ route('zawodnicy.index', $turniej) }}" method="GET">
             <div class="px-4 flex items-center gap-4">
                 <p>
                     <label for="nazwa" class="block mb-2 text-sm font-medium text-gray-300">Zawodnik</label>
