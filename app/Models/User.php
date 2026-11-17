@@ -18,7 +18,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
         'name', 'email', 'password', 
         'plec', 'data_urodzenia',
         'fide_ranking_klasyczny', 'fide_ranking_szybkie', 'fide_ranking_blyskawiczne',
-        'pzszach_ranking', 'tytul',
+        'pzszach_ranking',
         'fide_id', 'pzszach_id', 'klubowicz'
     ]
 )]

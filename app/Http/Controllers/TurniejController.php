@@ -39,6 +39,7 @@ class TurniejController extends Controller
     public function create()
     {
         $turniej_statusy = TurniejStatus::all();
+
         return view('turnieje.create', [
             'turniej_statusy' => $turniej_statusy
         ]);
@@ -58,24 +59,41 @@ class TurniejController extends Controller
             'liczba_rund' => 'required|integer|min:1',
             'limit_zawodnikow' => 'required|integer|min:1',
             'tempo_gry' => 'required|string|max:50',
+            'rodzaj_szachow' => 'required|in:Klasyczne,Szybkie,Błyskawiczne,Bullet',
             'status_id' => 'required|integer|exists:turniej_statusy,id',
+            'limit_plec' => 'nullable|in:M,K',
+            'limit_wiek' => 'nullable|integer|min:1',
+            'limit_ranking_od' => [
+                'nullable',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $limitRankingDo = $request->input('limit_ranking_do');
+                    if ($value !== null && $limitRankingDo !== null && (int) $value > (int) $limitRankingDo) {
+                        $fail('Ranking minimalny nie może być większy od rankingu maksymalnego.');
+                    }
+                },
+            ],
+            'limit_ranking_do' => 'nullable|integer|min:0',
+            'limit_klub' => 'required|boolean',
+            'zgloszony_do_pzszach' => 'required|boolean',
+            'zgloszony_do_fide' => 'required|boolean',
             'opis' => 'nullable|string',
-            'komunikat' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // max 2MB
+            'komunikat' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        // dodanie pliku z komunikatem
+        unset($validatedData['komunikat']);
+
         if ($request->hasFile('komunikat')) {
             $file = $request->file('komunikat');
-            
-            // 1. Pobranie oryginalnej nazwy pliku wraz z rozszerzeniem
             $originalName = $file->getClientOriginalName();
-            
-            // 2. Opcjonalne oczyszczenie nazwy ze spacji i dziwnych znaków (zalecane)
-            $safeName = time() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-
-            // 3. Zapisanie pliku z własną nazwą w katalogu 'komunikaty' na dysku 'public'
+            $safeName = Str::uuid() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
             $filePath = $file->storeAs('komunikaty', $safeName, 'public');
-            
+
+            if ($filePath === false) {
+                throw new \RuntimeException('Nie udało się zapisać komunikatu turnieju.');
+            }
+
             $validatedData['komunikat_path'] = $filePath;
         }
 
@@ -94,8 +112,11 @@ class TurniejController extends Controller
      */
     public function show(Turniej $turniej)
     {
+        $zgloszenie = $turniej->zgloszenia()->where('zawodnik_id', auth()->id())->first();
+
         return view('turnieje.show', [
-            'turniej' => $turniej
+            'turniej' => $turniej,
+            'zgloszenie' => $zgloszenie,
         ]);
     }
 
@@ -105,6 +126,7 @@ class TurniejController extends Controller
     public function edit(Turniej $turniej)
     {
         $turniej_statusy = TurniejStatus::all();
+
         return view('turnieje.edit', [
             'turniej' => $turniej,
             'turniej_statusy' => $turniej_statusy
@@ -116,7 +138,7 @@ class TurniejController extends Controller
      */
     public function update(Request $request, Turniej $turniej)
     {
-         // pobranie nowych danych z formularza
+        // pobranie nowych danych z formularza
         $validatedData = $request->validate([
             'nazwa' => 'required|string|max:255',
             'miejsce' => 'required|string|max:255',
@@ -125,29 +147,46 @@ class TurniejController extends Controller
             'liczba_rund' => 'required|integer|min:1',
             'limit_zawodnikow' => 'required|integer|min:1',
             'tempo_gry' => 'required|string|max:50',
+            'rodzaj_szachow' => 'required|in:Klasyczne,Szybkie,Błyskawiczne,Bullet',
             'status_id' => 'required|integer|exists:turniej_statusy,id',
+            'limit_plec' => 'nullable|in:M,K',
+            'limit_wiek' => 'nullable|integer|min:1',
+            'limit_ranking_od' => [
+                'nullable',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $limitRankingDo = $request->input('limit_ranking_do');
+                    if ($value !== null && $limitRankingDo !== null && (int) $value > (int) $limitRankingDo) {
+                        $fail('Ranking minimalny nie może być większy od rankingu maksymalnego.');
+                    }
+                },
+            ],
+            'limit_ranking_do' => 'nullable|integer|min:0',
+            'limit_klub' => 'required|boolean',
+            'zgloszony_do_pzszach' => 'required|boolean',
+            'zgloszony_do_fide' => 'required|boolean',
             'opis' => 'nullable|string',
+            'komunikat' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        if($request->hasFile('komunikat') && $turniej->komunikat_path) {
-            // usunięcie starego pliku
-            Storage::disk('public')->delete($turniej->komunikat_path);
-        }
+        unset($validatedData['komunikat']);
 
-        // dodanie nowego pliku z komunikatem
         if ($request->hasFile('komunikat')) {
             $file = $request->file('komunikat');
-            
-            // 1. Pobranie oryginalnej nazwy pliku wraz z rozszerzeniem
             $originalName = $file->getClientOriginalName();
-            
-            // 2. Opcjonalne oczyszczenie nazwy ze spacji i dziwnych znaków (zalecane)
-            $safeName = time() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-
-            // 3. Zapisanie pliku z własną nazwą w katalogu 'komunikaty' na dysku 'public'
+            $safeName = Str::uuid().'_'.Str::slug(pathinfo($originalName, PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $filePath = $file->storeAs('komunikaty', $safeName, 'public');
-            
+
+            if ($filePath === false) {
+                throw new \RuntimeException('Nie udało się zapisać komunikatu turnieju.');
+            }
+
             $validatedData['komunikat_path'] = $filePath;
+
+            if ($turniej->komunikat_path) {
+                Storage::disk('public')->delete($turniej->komunikat_path);
+            }
         }
 
         // dodanie pozostałych danych autoamtycznie
@@ -155,7 +194,7 @@ class TurniejController extends Controller
         // $validatedData['status_id'] = 1; // domyślnie ustawiamy status na "Planowany"
         // $validatedData['liczba_zawodnikow'] = 0; // na początku nie ma zawodników
 
-        Turniej::where('id', $turniej->id)->update($validatedData);
+        $turniej->update($validatedData);
 
         return redirect()->route('turnieje.show', $turniej)->with('success', 'Turniej został zaktualizowany pomyślnie.');
     }

@@ -8,8 +8,8 @@
         <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.show' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Komunikat</button>
     </a>
 
-    <a href="{{ route('turnieje.zawodnicy.index', [$turniej]) }}">
-        <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.zawodnicy.index' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Wyniki</button>
+    <a href="{{ route('zawodnicy.index', [$turniej]) }}">
+        <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'zawodnicy.index' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Wyniki</button>
     </a>
     <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.show' ? 'text-gray-300' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Rundy</button>
     <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.show' ? 'text-gray-300' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Generuj</button>

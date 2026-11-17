@@ -27,7 +27,6 @@ return new class extends Migration
             $table->integer('fide_ranking_szybkie')->default(0);
             $table->integer('fide_ranking_blyskawiczne')->default(0);
             $table->integer('pzszach_ranking')->default(0);
-            $table->string('tytul')->default('brak'); // skrót dla tytułu (np. I, IV, GM)
 
             $table->string('fide_id')->nullable();
             $table->string('pzszach_id')->nullable();

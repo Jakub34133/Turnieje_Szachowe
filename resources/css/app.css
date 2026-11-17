@@ -86,7 +86,6 @@ select:focus[data-flux-control] {
 /* -------------------------------------------------------- */
 
 /* Glassmorphism */
-
 .glass {
     background-color: var(--bg-glass);
     box-shadow: 0 25px 45px rgba(0,0,0,0.2);
@@ -110,7 +109,7 @@ select:focus[data-flux-control] {
 }
 
 .glass-2 {
-    background-color: var(--bg-glass);
+    /* background-color: var(--color); */
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-left: 7px solid var(--color-main);
@@ -119,6 +118,19 @@ select:focus[data-flux-control] {
     backdrop-filter: blur(5px);
     z-index: 15;
 }
+
+.glass-header {
+    background-color: var(--color-main);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 7px solid var(--color-main);
+    border-right: 7px solid var(--color-main);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    color: white;
+    z-index: 15;
+}
+
 
 /* Tło - szachownica */
 .bg-chessboard {

@@ -17,10 +17,18 @@ class Turniej extends Model
         'data_rozpoczecia',
         'data_zakonczenia',
         'tempo_gry',
+        'rodzaj_szachow',
         'liczba_zawodnikow',
         'limit_zawodnikow',
         'opis',
-        'komunikat_path'
+        'komunikat_path',
+        'limit_plec',
+        'limit_wiek',
+        'limit_ranking_od',
+        'limit_ranking_do',
+        'limit_klub',
+        'zgloszony_do_pzszach',
+        'zgloszony_do_fide'
     ];
 
     public function organizator()

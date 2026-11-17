@@ -1,4 +1,4 @@
-@include('partials.turniej-nav')
+{{-- @include('partials.turniej-nav') --}}
 
 {{-- zawartość --}}
 <x-layouts::app :title="__('Dodaj zgłoszenie')">

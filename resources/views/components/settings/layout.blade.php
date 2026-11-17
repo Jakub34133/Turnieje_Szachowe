@@ -13,8 +13,12 @@
 
     <div class="p-4 flex h-full w-full flex-1 flex-col glass border-t-none">
         <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">Ustawienia</h1>
-        {{-- <flux:heading>{{ $heading ?? '' }}</flux:heading> --}}
-        {{-- <flux:subheading>{{ $subheading ?? '' }}</flux:subheading> --}}
+        @if (isset($heading))
+            <flux:heading>{{ $heading }}</flux:heading>
+        @endif
+        @if (isset($subheading))
+            <flux:subheading>{{ $subheading }}</flux:subheading>
+        @endif
 
         <div class="grid">
             {{ $slot }}

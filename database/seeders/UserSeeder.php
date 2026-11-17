@@ -18,9 +18,9 @@ class UserSeeder extends Seeder
             'email' => 'kuba@turnieje.pl',
             'password' => bcrypt('kuba1234'),
             'pzszach_ranking' => 1600,
-            'tytul' => 'III',
             'plec' => 'M',
             'data_urodzenia' => '2003-10-24',
+            'pzszach_id' => 151421,
         ]);
 
         User::factory()->create([
@@ -28,7 +28,6 @@ class UserSeeder extends Seeder
             'email' => 'adam@turnieje.pl',
             'password' => bcrypt('adam1234'),
             'pzszach_ranking' => 1400,
-            'tytul' => 'IV',
             'plec' => 'M',
             'data_urodzenia' => '2002-11-03',
         ]);
@@ -38,7 +37,6 @@ class UserSeeder extends Seeder
             'email' => 'tomasz@turnieje.pl',
             'password' => bcrypt('tomasz1234'),
             'pzszach_ranking' => 1624,
-            'tytul' => 'III',
             'plec' => 'M',
             'data_urodzenia' => '2005-05-05',
         ]);
@@ -48,7 +46,6 @@ class UserSeeder extends Seeder
             'email' => 'alicja@turnieje.pl',
             'password' => bcrypt('alicja1234'),
             'pzszach_ranking' => 0,
-            'tytul' => 'brak',
             'plec' => 'K',
             'data_urodzenia' => '2006-10-10',
         ]);
@@ -58,7 +55,6 @@ class UserSeeder extends Seeder
             'email' => 'marek@turnieje.pl',
             'password' => bcrypt('marek1234'),
             'pzszach_ranking' => 0,
-            'tytul' => 'brak',
             'plec' => 'M',
             'data_urodzenia' => '1995-12-06',
         ]);
