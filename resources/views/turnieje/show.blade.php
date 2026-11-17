@@ -15,7 +15,7 @@
             {{ session('success') }}
         </div>
     @endif
-    
+
     <div class="p-4 flex w-full flex-1 flex-col">
 
         <div class="grid w-full grid-cols-5">
@@ -109,64 +109,6 @@
                 </p>
             </div>
 
-            {{-- ======================= Ograniczenia ========================== --}}
-            <h2 class="m-2 p-2 text-l text-gray-300 tracking-tight">Ograniczenia</h2>
-            <div class="grid grid-cols-2">
-                {{-- ograniczenia - płeć --}}
-                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
-                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
-                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie do płci
-                    </span>
-                    <span
-                        class="inline-flex items-center gap-1">
-                        {{ ['M' => 'Mężczyźni', 'K' => 'Kobiety', 'B' => 'Bez ograniczeń'][$turniej->limit_plec] ?? 'Brak ograniczeń' }}
-                    </span>
-                </p>
-
-                {{-- ograniczenia - wiek --}}
-                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
-                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
-                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie wiekowe
-                    </span>
-                    <span
-                        class="inline-flex items-center gap-1">{{ $turniej->limit_wiek !== null ? $turniej->limit_wiek . ' lat' : 'Brak ograniczeń' }}</span>
-                </p>
-
-                {{-- ograniczenia - ranking --}}
-                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
-                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
-                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie rankingowe
-                    </span>
-                    <span class="inline-flex items-center gap-1">
-                        @if ($turniej->limit_ranking_od !== null && $turniej->limit_ranking_do !== null)
-                            {{ $turniej->limit_ranking_od }} - {{ $turniej->limit_ranking_do }}
-                        @elseif ($turniej->limit_ranking_od !== null)
-                            Od {{ $turniej->limit_ranking_od }}
-                        @elseif ($turniej->limit_ranking_do !== null)
-                            Do {{ $turniej->limit_ranking_do }}
-                        @else
-                            Brak ograniczeń
-                        @endif
-                    </span>
-                </p>
-
-                {{-- ograniczenia - klub --}}
-                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
-                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
-                        <flux:icon.question-mark-circle class="text-main" />Turniej klubowy
-                    </span>
-                    <span
-                        class="inline-flex items-center gap-1">{{ $turniej->limit_klub ? 'Tak' : 'Nie' }}</span>
-                </p>
-
-                <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('POST')
-
-                    <input type="submit" value="Zgłoś się" class="w-full p-2 mb-4 border rounded-lg bg-main text-white cursor-pointer" />
-                </form>
-            </div>
-
             {{-- ======================== Informacje dodatkowe ========================= --}}
             <h2 class="m-2 p-2 text-l text-gray-300 tracking-tight">Informacje dodatkowe</h2>
             <div class="grid grid-cols-2">
@@ -216,6 +158,70 @@
                         </span>
                     </p>
                 @endif
+            </div>
+
+                        {{-- ======================= Ograniczenia i zgłaszanie się ========================== --}}
+            <h2 class="m-2 p-2 text-l text-gray-300 tracking-tight">Ograniczenia</h2>
+            <div class="grid grid-cols-5">
+                {{-- ograniczenia - płeć --}}
+                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
+                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie do płci
+                    </span>
+                    <span
+                        class="inline-flex items-center gap-1">
+                        {{ ['M' => 'Mężczyźni', 'K' => 'Kobiety', 'B' => 'Bez ograniczeń'][$turniej->limit_plec] ?? 'Brak ograniczeń' }}
+                    </span>
+                </p>
+
+                {{-- ograniczenia - wiek --}}
+                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
+                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie wiekowe
+                    </span>
+                    <span
+                        class="inline-flex items-center gap-1">{{ $turniej->limit_wiek !== null ? $turniej->limit_wiek . ' lat' : 'Brak ograniczeń' }}</span>
+                </p>
+
+                {{-- ograniczenia - ranking --}}
+                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
+                        <flux:icon.question-mark-circle class="text-main" />Ograniczenie rankingowe
+                    </span>
+                    <span class="inline-flex items-center gap-1">
+                        @if ($turniej->limit_ranking_od !== null && $turniej->limit_ranking_do !== null)
+                            {{ $turniej->limit_ranking_od }} - {{ $turniej->limit_ranking_do }}
+                        @elseif ($turniej->limit_ranking_od !== null)
+                            Od {{ $turniej->limit_ranking_od }}
+                        @elseif ($turniej->limit_ranking_do !== null)
+                            Do {{ $turniej->limit_ranking_do }}
+                        @else
+                            Brak ograniczeń
+                        @endif
+                    </span>
+                </p>
+
+                {{-- ograniczenia - klub --}}
+                <p class="p-2 m-2 grid  items-center whitespace-nowrap overflow-x-auto glass-2 ">
+                    <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
+                        <flux:icon.question-mark-circle class="text-main" />Turniej klubowy
+                    </span>
+                    <span
+                        class="inline-flex items-center gap-1">{{ $turniej->limit_klub ? 'Tak' : 'Nie' }}</span>
+                </p>
+
+                <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data" class="m-2">
+                    @csrf
+                    @method('POST')
+
+                    @if($zgloszenie != null && $zgloszenie->status_id == 1)
+                        <input type="submit" disabled value="Zgłoszenie oczekuje na potwierdzenie" class="w-full h-full items-center whitespace-wrap bg-main/20 " />
+                    @elseif($zgloszenie != null && $zgloszenie->status_id == 2)
+                        <input type="submit" disabled value="Już uczestniczysz w tym turnieju" class="w-full h-full items-center whitespace-wrap bg-main/20 " />
+                    @else
+                        <input type="submit" value="Zgłoś się" class="w-full h-full p-0 m-0 grid  items-center whitespace-nowrap overflow-x-auto bg-main cursor-pointer hover:bg-main/80 duration-200" />
+                    @endif
+                </form>
             </div>
         </div>
     </div>

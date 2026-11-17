@@ -112,8 +112,11 @@ class TurniejController extends Controller
      */
     public function show(Turniej $turniej)
     {
+        $zgloszenie = $turniej->zgloszenia()->where('zawodnik_id', auth()->id())->first();
+
         return view('turnieje.show', [
-            'turniej' => $turniej
+            'turniej' => $turniej,
+            'zgloszenie' => $zgloszenie,
         ]);
     }
 
