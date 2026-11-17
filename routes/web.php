@@ -29,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/approve', [ZgloszenieController::class, 'approve'])->name('turnieje.zgloszenia.approve');
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/reject', [ZgloszenieController::class, 'reject'])->name('turnieje.zgloszenia.reject');
     
-    Route::get('turniej/{turniej}/wyniki', [ZawodnikController::class, 'index'])->name('zawodnicy.index');
+    Route::get('turnieje/{turniej}/wyniki', [ZawodnikController::class, 'index'])->name('zawodnicy.index');
 
     // Zawodnicy (użytkownicy)
     Route::get('zawodnicy/{zawodnik}', [ZawodnikController::class, 'show'])->name('zawodnicy.show');

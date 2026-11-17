@@ -24,8 +24,9 @@
                         <span class="inline-flex items-center gap-1">
                             {{ $tytul->nazwa }}
                         </span>
-                        <span class="inline-flex items-center gap-1 text-gray-400">
-                            {{ $tytul->data_nadania }}
+                        <span class="inline-flex items-baseline-last gap-1 text-gray-400">
+                            <span class="text-xs">Uzyskano: </span>
+                            <span>{{ $tytul->data_nadania }}</span>
                         </span>
                     </span>
 

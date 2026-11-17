@@ -73,7 +73,7 @@ class ZgloszenieController extends Controller
 
         Zgloszenie::create($validatedData);
 
-        return redirect()->route('turnieje.zgloszenia.create', $request->turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
+        return redirect()->route('turnieje.show', $request->turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
     }
 
     /**
