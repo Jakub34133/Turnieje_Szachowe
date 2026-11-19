@@ -141,6 +141,14 @@ class RundaController extends Controller
         ]);
     }
 
+    public function begin(Turniej $turniej, Runda $runda)
+    {
+        $runda->update(['status' => RundaStatus::Trwajaca]);
+
+        return redirect()->route('rundy.show', ['turniej' => $turniej->id, 'runda' => $runda->id])
+            ->with('success', 'Runda została rozpoczęta pomyślnie.');
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

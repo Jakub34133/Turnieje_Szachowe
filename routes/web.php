@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PartiaController;
 use App\Http\Controllers\RundaController;
 use App\Http\Controllers\TurniejController;
 use App\Http\Controllers\TytulController;
@@ -35,6 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rundy
     Route::get('turnieje/{turniej}/rundy/{runda?}', [RundaController::class, 'show'])->name('rundy.show');
     Route::post('turnieje/{turniej}/rundy/{runda}/create', [RundaController::class, 'store'])->name('rundy.store');
+    Route::patch('turnieje/{turniej}/rundy/{runda}/begin', [RundaController::class, 'begin'])->name('rundy.begin');
+
+    // Partie
+    Route::patch('turnieje/{turniej}/rundy/{runda}/partie/{partia}', [PartiaController::class, 'update'])->name('partie.update');
 
     // Zawodnicy (użytkownicy)
     Route::get('zawodnicy/{zawodnik}', [ZawodnikController::class, 'show'])->name('zawodnicy.show');

@@ -79,7 +79,7 @@
                             Wygeneruj listę par zawodników
                         </flux:button>
                     </form>
-                @elseif ($runda->status === \App\Enums\RundaStatus::Przygotowana)
+                @else
                     <h2 class="px-4 pt-4 text-lg font-semibold">Pary rundy</h2>
                     @if ($partie->isEmpty())
                         <p class="p-4 text-gray-300">W tej rundzie nie ma partii.</p>
@@ -88,28 +88,35 @@
                             <thead>
                                 <tr>
                                     <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Stolik</th>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Białe</th>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Czarne</th>
+                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-right">Białe</th>
+                                    @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
+                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300"></th>
+                                    @endif
+                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-left">Czarne</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($partie as $partia)
                                     <tr>
                                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->stolik }}</td>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->bialeZawodnik->name }}</td>
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-right">{{ $partia->bialeZawodnik->name }}</td>
                                         @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
-                                            <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->biale_wynik_punktowy }}</td>
-                                            <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->czarne_wynik_punktowy }}</td>
+                                            <td class="border-b border-gray-200 p-2 text-sm text-white text-center">
+                                                <input type="number" value="{{ $partia->biale_wynik_punktowy | 0 }}" class="bg-black/20 text-center"/>
+                                                {{ ' - ' }}
+                                                <input type="number" value="{{ $partia->czarne_wynik_punktowy | 0 }}" class="bg-black/20 text-center"/>
+                                            </td>
                                         @endif
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->czarneZawodnik->name }}</td>
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-left">{{ $partia->czarneZawodnik->name }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
 
                         @if($runda->status === \App\Enums\RundaStatus::Przygotowana)
-                            <form action="{{ route('rundy.store', [$turniej, $runda]) }}" method="POST">
+                            <form action="{{ route('rundy.begin', [$turniej, $runda]) }}" method="POST">
                                 @csrf
+                                @method('PATCH')
                                 <flux:button type="submit" class="mt-2 w-fit shrink-0 hover:cursor-pointer"
                                     icon="">
                                     Rozpocznij rundę
