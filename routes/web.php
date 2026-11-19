@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RundaController;
 use App\Http\Controllers\TurniejController;
 use App\Http\Controllers\TytulController;
 use App\Http\Controllers\ZawodnikController;
@@ -30,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/reject', [ZgloszenieController::class, 'reject'])->name('turnieje.zgloszenia.reject');
     
     Route::get('turnieje/{turniej}/wyniki', [ZawodnikController::class, 'index'])->name('zawodnicy.index');
+
+    // Rundy
+    Route::get('turnieje/{turniej}/rundy/{runda?}', [RundaController::class, 'show'])->name('rundy.show');
+    Route::post('turnieje/{turniej}/rundy/{runda}/create', [RundaController::class, 'store'])->name('rundy.store');
 
     // Zawodnicy (użytkownicy)
     Route::get('zawodnicy/{zawodnik}', [ZawodnikController::class, 'show'])->name('zawodnicy.show');

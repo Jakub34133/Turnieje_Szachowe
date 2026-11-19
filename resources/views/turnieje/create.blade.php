@@ -88,10 +88,10 @@
                         <select name="rodzaj_szachow" id="rodzaj_szachow"
                             class="w-full px-4 py-2 border rounded-full bg-black/20 border-white/20" required>
                             <option value="" class="bg-black/75" disabled @selected(blank(old('rodzaj_szachow')))>Wybierz rodzaj szachów</option>
-                            @foreach (['Klasyczne', 'Szybkie', 'Błyskawiczne', 'Bullet'] as $rodzajSzachow)
-                                <option value="{{ $rodzajSzachow }}"
-                                    @selected(old('rodzaj_szachow') === $rodzajSzachow)
-                                    class="bg-black/75">{{ $rodzajSzachow }}</option>
+                            @foreach (\App\Enums\RodzajSzachow::cases() as $rodzajSzachow)
+                                <option value="{{ $rodzajSzachow->value }}"
+                                    @selected(old('rodzaj_szachow') === $rodzajSzachow->value)
+                                    class="bg-black/75">{{ $rodzajSzachow->label() }}</option>
                             @endforeach
                         </select>
                     </p>

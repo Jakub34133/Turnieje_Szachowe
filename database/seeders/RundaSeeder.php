@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\RundaStatus;
+use App\Models\Turniej;
 use Illuminate\Database\Seeder;
 
 class RundaSeeder extends Seeder
@@ -12,6 +13,13 @@ class RundaSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Turniej::query()->each(function (Turniej $turniej) {
+            for ($numer = 1; $numer <= $turniej->liczba_rund; $numer++) {
+                $turniej->rundy()->firstOrCreate(
+                    ['numer' => $numer],
+                    ['status' => RundaStatus::NieRozpoczeta]
+                );
+            }
+        });
     }
 }

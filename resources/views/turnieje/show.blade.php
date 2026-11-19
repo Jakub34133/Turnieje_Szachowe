@@ -25,7 +25,7 @@
             <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off p-2">
                 Wyniki
             </a>
-            <a href="#" class="glass-off p-2">
+            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off p-2">
                 Rundy
             </a>
             <a href="{{ route('turnieje.edit', $turniej) }}" class="glass-off p-2">
@@ -88,7 +88,7 @@
                     <span class="inline-flex items-center gap-1 text-main uppercase text-sm font-black">
                         <flux:icon.clock class="text-main" />Rodzaj szachów
                     </span>
-                    <span class="inline-flex items-center gap-1">{{ $turniej->rodzaj_szachow }}</span>
+                    <span class="inline-flex items-center gap-1">{{ $turniej->rodzaj_szachow->label() }}</span>
                 </p>
 
                 {{-- liczba zawodników --}}

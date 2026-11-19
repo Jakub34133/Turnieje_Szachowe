@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,6 +19,7 @@ class DatabaseSeeder extends Seeder
             TytulSeeder::class,
             TurniejStatusSeeder::class,
             TurniejSeeder::class,
+            RundaSeeder::class,
             ZgloszenieStatusSeeder::class,
             ZgloszenieSeeder::class,
             TurniejZawodnikSeeder::class,

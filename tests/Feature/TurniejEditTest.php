@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RodzajSzachow;
+use App\Models\Runda;
 use App\Models\Turniej;
 use App\Models\TurniejStatus;
 use App\Models\User;
@@ -51,7 +53,8 @@ class TurniejEditTest extends TestCase
 
         $turniej->refresh();
 
-        $this->assertSame('Szybkie', $turniej->rodzaj_szachow);
+        $this->assertSame(RodzajSzachow::Szybkie, $turniej->rodzaj_szachow);
+        $this->assertSame(7, Runda::where('turniej_id', $turniej->id)->count());
         $this->assertSame('K', $turniej->limit_plec);
         $this->assertSame(16, $turniej->limit_wiek);
         $this->assertSame(1400, $turniej->limit_ranking_od);
@@ -84,7 +87,7 @@ class TurniejEditTest extends TestCase
                 'liczba_rund' => $turniej->liczba_rund,
                 'limit_zawodnikow' => $turniej->limit_zawodnikow,
                 'tempo_gry' => $turniej->tempo_gry,
-                'rodzaj_szachow' => $turniej->rodzaj_szachow,
+                'rodzaj_szachow' => $turniej->rodzaj_szachow->value,
                 'status_id' => $status->id,
                 'limit_ranking_od' => 1900,
                 'limit_ranking_do' => 1400,

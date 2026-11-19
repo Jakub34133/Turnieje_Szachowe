@@ -12,7 +12,7 @@
             <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off p-2">
                 Wyniki
             </a>
-            <a href="#" class="glass-off p-2">
+            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off p-2">
                 Rundy
             </a>
             <a href="{{ route('turnieje.edit', $turniej) }}" class="glass p-2" style="border-bottom: none">
@@ -142,10 +142,10 @@
                             <span class="inline-flex items-center">
                                 <select name="rodzaj_szachow" id="rodzaj_szachow"
                                     class="w-full px-4 py-2 border rounded-full bg-black/20 border-white/20" required>
-                                    @foreach (['Klasyczne', 'Szybkie', 'Błyskawiczne', 'Bullet'] as $rodzajSzachow)
-                                        <option value="{{ $rodzajSzachow }}"
-                                            @selected(old('rodzaj_szachow', $turniej->rodzaj_szachow) === $rodzajSzachow)
-                                            class="bg-black/75">{{ $rodzajSzachow }}</option>
+                                    @foreach (\App\Enums\RodzajSzachow::cases() as $rodzajSzachow)
+                                        <option value="{{ $rodzajSzachow->value }}"
+                                            @selected(old('rodzaj_szachow', $turniej->rodzaj_szachow->value) === $rodzajSzachow->value)
+                                            class="bg-black/75">{{ $rodzajSzachow->label() }}</option>
                                     @endforeach
                                 </select>
                             </span>

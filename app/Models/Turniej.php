@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\RodzajSzachow;
 use Illuminate\Database\Eloquent\Model;
 
 class Turniej extends Model
 {
-    protected $table = "turnieje";
+    protected $table = 'turnieje';
 
     protected $fillable = [
         'organizator_id',
@@ -28,8 +29,15 @@ class Turniej extends Model
         'limit_ranking_do',
         'limit_klub',
         'zgloszony_do_pzszach',
-        'zgloszony_do_fide'
+        'zgloszony_do_fide',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'rodzaj_szachow' => RodzajSzachow::class,
+        ];
+    }
 
     public function organizator()
     {
@@ -44,5 +52,10 @@ class Turniej extends Model
     public function zgloszenia()
     {
         return $this->hasMany(Zgloszenie::class, 'turniej_id');
+    }
+
+    public function rundy()
+    {
+        return $this->hasMany(Runda::class, 'turniej_id')->orderBy('numer');
     }
 }

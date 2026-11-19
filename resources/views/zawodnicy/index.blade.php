@@ -9,7 +9,7 @@
             <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass p-2" style="border-bottom: none">
                 Wyniki
             </a>
-            <a href="#" class="glass-off p-2">
+            <a href="{{ route('rundy.show', [$turniej]) }}" class="glass-off p-2">
                 Rundy
             </a>
             <a href="{{ route('turnieje.edit', $turniej) }}" class="glass-off p-2">

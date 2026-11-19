@@ -61,7 +61,7 @@
                                     <flux:icon.user-group class="text-main" /> {{ $turniej->liczba_zawodnikow }} /
                                     {{ $turniej->limit_zawodnikow }} zawodników</span>
                                 <span class="inline-flex items-center gap-1">
-                                    <flux:icon.clock class="text-main" /> {{ $turniej->rodzaj_szachow }}
+                                    <flux:icon.clock class="text-main" /> {{ $turniej->rodzaj_szachow->label() }}
                                 </span>
                                 <span class="inline-flex items-center gap-1">
                                     <flux:icon.forward class="text-main" /> {{ $turniej->status->nazwa }}

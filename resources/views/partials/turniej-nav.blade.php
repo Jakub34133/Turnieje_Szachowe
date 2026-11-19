@@ -11,7 +11,9 @@
     <a href="{{ route('zawodnicy.index', [$turniej]) }}">
         <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'zawodnicy.index' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Wyniki</button>
     </a>
-    <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.show' ? 'text-gray-300' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Rundy</button>
+    <a href="{{ route('rundy.show', $turniej) }}">
+        <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'rundy.show' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Rundy</button>
+    </a>
     <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.show' ? 'text-gray-300' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Generuj</button>
     <a href="{{ route('turnieje.edit', $turniej) }}">
         <button class="px-4 py-2 text-md font-medium {{ $currentRoute === 'turnieje.edit' ? 'text-white' : 'text-gray-300' }} hover:text-white hover:cursor-pointer">Edytuj turniej</button>
