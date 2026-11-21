@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 
+// TODO: Tabele profilowe zawodnik_profil, sedzia_profil itp.
 #[Fillable(
     [
         'name', 'email', 'password', 

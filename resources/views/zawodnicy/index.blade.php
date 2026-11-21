@@ -21,10 +21,37 @@
         </div>
         <div class="p-4 flex w-full flex-1 flex-col glass" style="border-top: none;">
 
-            <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">Wyniki</h1>
+            <div class="flex gap-2 items-center">
+                @if ($numerPoprzedniejRundy !== null)
+                    <a href="{{ route('zawodnicy.index', [$turniej, 'runda' => $numerPoprzedniejRundy]) }}"
+                        aria-label="Poprzednia runda" class="cursor-pointer">
+                        <flux:icon.chevron-left />
+                    </a>
+                @else
+                    <button type="button" disabled aria-label="Brak poprzedniej rundy"
+                        class="cursor-not-allowed text-gray-500">
+                        <flux:icon.chevron-left />
+                    </button>
+                @endif
+                <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">
+                    {{ $listaStartowa ? 'Lista startowa' : 'Wyniki po rundzie '.$wybranaRunda->numer }}
+                </h1>
+                @if ($numerNastepnejRundy !== null)
+                    <a href="{{ route('zawodnicy.index', [$turniej, 'runda' => $numerNastepnejRundy]) }}"
+                        aria-label="Następna runda" class="cursor-pointer">
+                        <flux:icon.chevron-right />
+                    </a>
+                @else
+                    <button type="button" disabled aria-label="Brak następnej rundy"
+                        class="cursor-not-allowed text-gray-500">
+                        <flux:icon.chevron-right />
+                    </button>
+                @endif
+            </div>
 
             <form action="{{ route('zawodnicy.index', $turniej) }}" method="GET">
                 <div class="px-4 flex items-center gap-4">
+                    <input type="hidden" name="runda" value="{{ $numerRundy }}">
                     <p>
                         <label for="nazwa" class="block mb-2 text-sm font-medium text-gray-300">Zawodnik</label>
                         <input type="text" id="nazwa" name="nazwa" value="{{ request('nazwa') }}"
@@ -39,8 +66,14 @@
             </form>
 
             <div>
-                @if ($turniejZawodnik->isEmpty())
-                    <p class="p-4 text-gray-300">Nie ma jeszcze żadnych zawodników.</p>
+                @if ($listaStartowa && $turniejZawodnik->isEmpty())
+                    <p class="p-4 text-gray-300">Jeszcze nie ma zgłoszonych zawodników</p>
+                @elseif (!$listaStartowa && $wybranaRunda->status !== \App\Enums\RundaStatus::Zakonczona)
+                    <p class="p-4 text-gray-300">Jeszcze nie ma wyników dla tej rundy</p>
+                @elseif ($turniejZawodnik->isEmpty())
+                    <p class="p-4 text-gray-300">
+                        Jeszcze nie ma wyników dla tej rundy
+                    </p>
                 @else
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -49,7 +82,9 @@
                                 <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Zawodnik</th>
                                 <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Ranking PZSzach</th>
                                 <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Tytuł</th>
-                                <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Punkty</th>
+                                @unless ($listaStartowa)
+                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Punkty</th>
+                                @endunless
                             </tr>
                         </thead>
                         <tbody>
@@ -61,13 +96,20 @@
                                     class="hover:bg-gray-700 {{ request('nazwa') && str_contains(strtolower($zawodnik->zawodnik->name), strtolower(request('nazwa'))) ? 'bg-gray-500' : '' }}">
                                     <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $miejsce++ }}</td>
                                     <td class="border-b border-gray-200 p-2 text-sm text-white">
-                                        {{ $zawodnik->zawodnik->name }}</td>
+                                        <a href="{{ route('zawodnicy.show', $zawodnik->zawodnik) }}">
+                                            {{ $zawodnik->zawodnik->name }}
+                                        </a>
+                                    </td>
                                     <td class="border-b border-gray-200 p-2 text-sm text-white">
                                         {{ $zawodnik->zawodnik->pzszach_ranking }}</td>
                                     <td class="border-b border-gray-200 p-2 text-sm text-white">
                                         {{ $zawodnik->zawodnik->tytul }}</td>
-                                    <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $zawodnik->punkty }}
-                                    </td>
+                                    @unless ($listaStartowa) {{-- if(false) --}}
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                            {{ floor($zawodnik->punkty_historia) }}
+                                            {{ $zawodnik->punkty_historia != floor($zawodnik->punkty_historia) ? '½' : '' }}
+                                        </td>
+                                    @endunless
                                 </tr>
                             @endforeach
                 @endif

@@ -30,13 +30,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('turnieje/{turniej}/zgloszenia/store', [ZgloszenieController::class, 'store'])->name('turnieje.zgloszenia.store');
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/approve', [ZgloszenieController::class, 'approve'])->name('turnieje.zgloszenia.approve');
     Route::post('turnieje/{turniej}/zgloszenia/{zgloszenie}/reject', [ZgloszenieController::class, 'reject'])->name('turnieje.zgloszenia.reject');
-    
+
     Route::get('turnieje/{turniej}/wyniki', [ZawodnikController::class, 'index'])->name('zawodnicy.index');
 
     // Rundy
     Route::get('turnieje/{turniej}/rundy/{runda?}', [RundaController::class, 'show'])->name('rundy.show');
     Route::post('turnieje/{turniej}/rundy/{runda}/create', [RundaController::class, 'store'])->name('rundy.store');
     Route::patch('turnieje/{turniej}/rundy/{runda}/begin', [RundaController::class, 'begin'])->name('rundy.begin');
+    Route::patch('turnieje/{turniej}/rundy/{runda}/finish', [RundaController::class, 'finish'])->name('rundy.finish');
 
     // Partie
     Route::patch('turnieje/{turniej}/rundy/{runda}/partie/{partia}', [PartiaController::class, 'update'])->name('partie.update');

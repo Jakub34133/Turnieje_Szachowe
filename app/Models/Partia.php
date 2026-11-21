@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WynikPunktowyPartii;
 use Illuminate\Database\Eloquent\Model;
 
 class Partia extends Model
@@ -16,6 +17,14 @@ class Partia extends Model
         'biale_wynik_punktowy',
         'czarne_wynik_punktowy',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'biale_wynik_punktowy' => WynikPunktowyPartii::class,
+            'czarne_wynik_punktowy' => WynikPunktowyPartii::class,
+        ];
+    }
 
     public function runda()
     {

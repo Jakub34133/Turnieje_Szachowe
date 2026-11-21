@@ -8,6 +8,7 @@ use App\Models\Partia;
 use App\Models\Runda;
 use App\Models\Turniej;
 use App\Models\TurniejZawodnik;
+use App\Models\TurniejZawodnikHistoria;
 use Illuminate\Support\Facades\DB;
 
 class RundaController extends Controller
@@ -34,6 +35,13 @@ class RundaController extends Controller
     public function store(Turniej $turniej, Runda $runda)
     {
         abort_unless($runda->turniej_id === $turniej->id, 404);
+
+        $poprzedniaRunda = $this->poprzedniaRunda($turniej, $runda);
+
+        if ($poprzedniaRunda !== null && $poprzedniaRunda->status !== RundaStatus::Zakonczona) {
+            return redirect()->route('rundy.show', [$turniej, $runda])
+                ->with('error', 'Nie można wygenerować par, dopóki poprzednia runda nie zostanie zakończona.');
+        }
 
         if ($runda->status !== RundaStatus::NieRozpoczeta || $runda->partie()->exists()) {
             return redirect()->route('rundy.show', [$turniej, $runda])
@@ -64,7 +72,7 @@ class RundaController extends Controller
         }
 
         /* Utworzenie partii dla pierwszej rundy
-            Podział - górna i dolna połowa zawodników, 
+            Podział - górna i dolna połowa zawodników,
             Parowanie - 1 zawodnik z górnej połowy z 1 zawodnikiem z dolnej połowy, 2 z górnej z 2 z dolnej itd.
             Kolor - losowy dla pierwszej pary, naprzemiennie dla pozostałych par
         */
@@ -85,12 +93,11 @@ class RundaController extends Controller
                     'czarne_zawodnik_id' => $czarne->zawodnik_id,
                 ]);
 
-
                 $kolorBialych === 0 ? $kolorBialych = 1 : $kolorBialych = 0;
             }
 
             if ($zawodnicy->count() % 2 !== 0) {
-                $zawodnicy->last()->increment('punkty');
+                // $zawodnicy->last()->increment('punkty'); zapisać np. w rundach
             }
 
             $runda->update(['status' => RundaStatus::Przygotowana]);
@@ -105,16 +112,17 @@ class RundaController extends Controller
      */
     public function show(Turniej $turniej, ?Runda $runda = null)
     {
-        $runda ??= $turniej->rundy()->first();
+        $runda ??= Runda::query()
+            ->where('turniej_id', $turniej->id)
+            ->whereIn('status', [RundaStatus::Trwajaca->value, RundaStatus::Zakonczona->value])
+            ->orderByDesc('numer')
+            ->first()
+            ?? $turniej->rundy()->first();
 
         abort_if($runda === null, 404);
         abort_unless($runda->turniej_id === $turniej->id, 404);
 
-        $poprzedniaRunda = Runda::query()
-            ->where('turniej_id', $turniej->id)
-            ->where('numer', '<', $runda->numer)
-            ->orderByDesc('numer')
-            ->first();
+        $poprzedniaRunda = $this->poprzedniaRunda($turniej, $runda);
 
         $nastepnaRunda = Runda::query()
             ->where('turniej_id', $turniej->id)
@@ -138,15 +146,104 @@ class RundaController extends Controller
             'partie' => $partie,
             'poprzedniaRunda' => $poprzedniaRunda,
             'nastepnaRunda' => $nastepnaRunda,
+            'moznaWygenerowacPary' => $poprzedniaRunda === null || $poprzedniaRunda->status === RundaStatus::Zakonczona,
         ]);
     }
 
     public function begin(Turniej $turniej, Runda $runda)
     {
+        abort_unless($runda->turniej_id === $turniej->id, 404);
+
+        $poprzedniaRunda = $this->poprzedniaRunda($turniej, $runda);
+
+        if ($poprzedniaRunda !== null && $poprzedniaRunda->status !== RundaStatus::Zakonczona) {
+            return redirect()->route('rundy.show', [$turniej, $runda])
+                ->with('error', 'Nie można rozpocząć rundy, dopóki poprzednia runda nie zostanie zakończona.');
+        }
+
         $runda->update(['status' => RundaStatus::Trwajaca]);
 
         return redirect()->route('rundy.show', ['turniej' => $turniej->id, 'runda' => $runda->id])
             ->with('success', 'Runda została rozpoczęta pomyślnie.');
+    }
+
+    public function finish(Turniej $turniej, Runda $runda)
+    {
+        abort_unless($runda->turniej_id === $turniej->id, 404);
+
+        $error = DB::transaction(function () use ($turniej, $runda) {
+            $runda = Runda::query()->lockForUpdate()->findOrFail($runda->id);
+
+            if ($runda->status !== RundaStatus::Trwajaca) {
+                return 'Runda nie jest w trakcie rozgrywania.';
+            }
+
+            $partie = $runda->partie()->lockForUpdate()->get();
+
+            if ($partie->isEmpty()) {
+                return 'Nie można zakończyć rundy bez partii.';
+            }
+
+            if ($partie->contains(fn (Partia $partia) => $partia->biale_wynik_punktowy === null || $partia->czarne_wynik_punktowy === null)) {
+                return 'Uzupełnij wyniki wszystkich partii przed zakończeniem rundy.';
+            }
+
+            $punktyPolowkowe = [];
+
+            foreach ($partie as $partia) {
+                foreach ([
+                    $partia->biale_zawodnik_id => $partia->biale_wynik_punktowy,
+                    $partia->czarne_zawodnik_id => $partia->czarne_wynik_punktowy,
+                ] as $zawodnikId => $wynik) {
+                    $punktyPolowkowe[$zawodnikId] = ($punktyPolowkowe[$zawodnikId] ?? 0)
+                        + match ($wynik->value) {
+                            '0' => 0,
+                            '0.5' => 1,
+                            '1' => 2,
+                        };
+                }
+            }
+
+            foreach ($punktyPolowkowe as $zawodnikId => $punkty) {
+                $turniejZawodnik = TurniejZawodnik::query()
+                    ->where('turniej_id', $turniej->id)
+                    ->where('zawodnik_id', $zawodnikId)
+                    ->firstOrFail();
+
+                $turniejZawodnik->increment('punkty', $punkty / 2);
+            }
+
+            $turniejZawodnicy = TurniejZawodnik::query()->where('turniej_id', $turniej->id)->get();
+
+            foreach ($turniejZawodnicy as $turniejZawodnik) {
+                TurniejZawodnikHistoria::create([
+                    'turniej_id' => $turniej->id,
+                    'zawodnik_id' => $turniejZawodnik->zawodnik_id,
+                    'runda_id' => $runda->id,
+                    'punkty_historia' => $turniejZawodnik->punkty,
+                ]);
+            }
+
+            $runda->update(['status' => RundaStatus::Zakonczona]);
+
+            return null;
+        });
+
+        if ($error !== null) {
+            return redirect()->route('rundy.show', [$turniej, $runda])->with('error', $error);
+        }
+
+        return redirect()->route('rundy.show', [$turniej, $runda])
+            ->with('success', 'Runda została zakończona, a punkty zawodników zaktualizowane.');
+    }
+
+    private function poprzedniaRunda(Turniej $turniej, Runda $runda): ?Runda
+    {
+        return Runda::query()
+            ->where('turniej_id', $turniej->id)
+            ->where('numer', '<', $runda->numer)
+            ->orderByDesc('numer')
+            ->first();
     }
 
     /**

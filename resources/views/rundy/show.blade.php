@@ -1,5 +1,15 @@
 {{-- @include('partials.turniej-nav') --}}
 <x-layouts::app :title="__('Rundy')">
+    @if (session('error'))
+        <p class="p-2 m-4 flex items-center justify-between whitespace-nowrap overflow-x-auto glass-2" role="alert">
+            {{ session('error') }}
+        </p>
+    @endif
+    @if (session('success'))
+        <p class="p-2 m-4 flex items-center justify-between whitespace-nowrap overflow-x-auto glass-2" role="status">
+            {{ session('success') }}
+        </p>
+    @endif
     <div class="p-4 flex w-full flex-1 flex-col">
 
         <div class="grid w-full grid-cols-5">
@@ -63,22 +73,20 @@
             </form>
 
             <div>
-                {{-- @if (session('error'))
-                    <p class="p-4 text-red-300" role="alert">{{ session('error') }}</p>
-                @endif
-                @if (session('success'))
-                    <p class="p-4 text-green-300" role="status">{{ session('success') }}</p>
-                @endif
-                <p class="px-4 text-gray-300">Status rundy: {{ $runda->status->label() }}</p> --}}
+
+                <p class="px-4 text-gray-300">Status rundy: {{ $runda->status->label() }}</p>
                 @if ($runda->status === \App\Enums\RundaStatus::NieRozpoczeta)
-                    <p class="p-4 text-gray-300">Runda jeszcze nie rozpoczęta.</p>
-                    <form action="{{ route('rundy.store', [$turniej, $runda]) }}" method="POST">
-                        @csrf
-                        <flux:button type="submit" class="mt-2 w-fit shrink-0 hover:cursor-pointer"
-                            icon="">
-                            Wygeneruj listę par zawodników
-                        </flux:button>
-                    </form>
+                    @if ($moznaWygenerowacPary)
+                        <form action="{{ route('rundy.store', [$turniej, $runda]) }}" method="POST">
+                            @csrf
+                            <flux:button type="submit" class="mt-2 w-fit shrink-0 hover:cursor-pointer"
+                                icon="">
+                                Wygeneruj listę par zawodników
+                            </flux:button>
+                        </form>
+                    @else
+                        <p class="p-4 text-gray-300">Poprzednia runda musi zostać zakończona przed wygenerowaniem par.</p>
+                    @endif
                 @else
                     <h2 class="px-4 pt-4 text-lg font-semibold">Pary rundy</h2>
                     @if ($partie->isEmpty())
@@ -89,9 +97,7 @@
                                 <tr>
                                     <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Stolik</th>
                                     <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-right">Białe</th>
-                                    @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
                                     <th class="border-b border-gray-200 p-2 text-sm text-gray-300"></th>
-                                    @endif
                                     <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-left">Czarne</th>
                                 </tr>
                             </thead>
@@ -99,15 +105,47 @@
                                 @foreach ($partie as $partia)
                                     <tr>
                                         <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $partia->stolik }}</td>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-right">{{ $partia->bialeZawodnik->name }}</td>
-                                        @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
-                                            <td class="border-b border-gray-200 p-2 text-sm text-white text-center">
-                                                <input type="number" value="{{ $partia->biale_wynik_punktowy | 0 }}" class="bg-black/20 text-center"/>
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-right">
+                                            <a href="{{ route('zawodnicy.show', [$partia->bialeZawodnik]) }}">
+                                                {{ $partia->bialeZawodnik->name }}
+                                            </a>
+                                        </td>
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-center">
+                                            @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
+                                                <form action="{{ route('partie.update', [$turniej, $runda, $partia]) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="biale_wynik_punktowy" aria-label="Wynik białych"
+                                                        onchange="this.form.submit()" class="bg-black/20 text-center">
+                                                        <option value="" {{ $partia->biale_wynik_punktowy === null ? 'selected' : '' }} class="bg-black">—</option>
+                                                        @foreach (\App\Enums\WynikPunktowyPartii::cases() as $wynik)
+                                                            <option value="{{ $wynik->value }}" {{ $partia->biale_wynik_punktowy === $wynik ? 'selected' : '' }} class="bg-black">{{ $wynik->label() }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </form>
                                                 {{ ' - ' }}
-                                                <input type="number" value="{{ $partia->czarne_wynik_punktowy | 0 }}" class="bg-black/20 text-center"/>
-                                            </td>
-                                        @endif
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-left">{{ $partia->czarneZawodnik->name }}</td>
+                                                <form action="{{ route('partie.update', [$turniej, $runda, $partia]) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="czarne_wynik_punktowy" aria-label="Wynik czarnych"
+                                                        onchange="this.form.submit()" class="bg-black/20 text-center">
+                                                        <option value="" {{ $partia->czarne_wynik_punktowy === null ? 'selected' : '' }} class="bg-black">—</option>
+                                                        @foreach (\App\Enums\WynikPunktowyPartii::cases() as $wynik)
+                                                            <option value="{{ $wynik->value }}" {{ $partia->czarne_wynik_punktowy === $wynik ? 'selected' : '' }} class="bg-black">{{ $wynik->label() }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </form>
+                                            @elseif ($runda->status === \App\Enums\RundaStatus::Zakonczona)
+                                                {{ $partia->biale_wynik_punktowy?->label() ?? '—' }}
+                                                {{ ' - ' }}
+                                                {{ $partia->czarne_wynik_punktowy?->label() ?? '—' }}
+                                            @endif
+                                        </td>
+                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-left">
+                                            <a href="{{ route('zawodnicy.show', [$partia->czarneZawodnik]) }}">
+                                                {{ $partia->czarneZawodnik->name }}
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -123,8 +161,9 @@
                                 </flux:button>
                             </form>
                         @elseif ($runda->status === \App\Enums\RundaStatus::Trwajaca)
-                            <form action="{{ route('rundy.store', [$turniej, $runda]) }}" method="POST">
+                            <form action="{{ route('rundy.finish', [$turniej, $runda]) }}" method="POST">
                                 @csrf
+                                @method('PATCH')
                                 <flux:button type="submit" class="mt-2 w-fit shrink-0 hover:cursor-pointer"
                                     icon="">
                                     Zatwierdź wyniki i zakończ rundę
