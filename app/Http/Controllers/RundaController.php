@@ -76,7 +76,37 @@ class RundaController extends Controller
             Parowanie - 1 zawodnik z górnej połowy z 1 zawodnikiem z dolnej połowy, 2 z górnej z 2 z dolnej itd.
             Kolor - losowy dla pierwszej pary, naprzemiennie dla pozostałych par
         */
-        DB::transaction(function () use ($zawodnicy, $runda) {
+        DB::transaction(function () use ($zawodnicy, $runda, $turniej) {
+            $wolnyLos = null;
+
+            if ($zawodnicy->count() % 2 !== 0) {
+                $poprzednieWolneLosy = Runda::query()
+                    ->where('turniej_id', $turniej->id)
+                    ->whereNotNull('wolny_los_zawodnik_id')
+                    ->pluck('wolny_los_zawodnik_id');
+
+                $kandydaci = TurniejZawodnik::query()
+                    ->where('turniej_zawodnik.turniej_id', $turniej->id)
+                    ->join('users', 'turniej_zawodnik.zawodnik_id', '=', 'users.id')
+                    ->orderBy('turniej_zawodnik.punkty')
+                    ->orderBy('users.pzszach_ranking')
+                    ->orderByDesc('turniej_zawodnik.id')
+                    ->select('turniej_zawodnik.*');
+
+                $wolnyLos = (clone $kandydaci)
+                    ->when(
+                        $poprzednieWolneLosy->isNotEmpty(),
+                        fn ($query) => $query->whereNotIn('turniej_zawodnik.zawodnik_id', $poprzednieWolneLosy)
+                    )
+                    ->first() ?? $kandydaci->firstOrFail();
+
+                $zawodnicy = $zawodnicy
+                    ->reject(fn (TurniejZawodnik $zawodnik) => $zawodnik->zawodnik_id === $wolnyLos->zawodnik_id)
+                    ->values();
+
+                $wolnyLos->increment('punkty');
+            }
+
             $liczbaPartii = intdiv($zawodnicy->count(), 2);
             $gornaPolowa = $zawodnicy->slice(0, $liczbaPartii)->values();
             $dolnaPolowa = $zawodnicy->slice($liczbaPartii, $liczbaPartii)->values();
@@ -96,11 +126,10 @@ class RundaController extends Controller
                 $kolorBialych === 0 ? $kolorBialych = 1 : $kolorBialych = 0;
             }
 
-            if ($zawodnicy->count() % 2 !== 0) {
-                // $zawodnicy->last()->increment('punkty'); zapisać np. w rundach
-            }
-
-            $runda->update(['status' => RundaStatus::Przygotowana]);
+            $runda->update([
+                'status' => RundaStatus::Przygotowana,
+                'wolny_los_zawodnik_id' => $wolnyLos?->zawodnik_id,
+            ]);
         });
 
         return redirect()->route('rundy.show', ['turniej' => $turniej->id, 'runda' => $runda->id])
@@ -138,6 +167,7 @@ class RundaController extends Controller
             ->select('turniej_zawodnik.*')
             ->get();
         $partie = $runda->partie()->with(['bialeZawodnik', 'czarneZawodnik'])->orderBy('stolik')->get();
+        $runda->loadMissing('wolnyLosZawodnik');
 
         return view('rundy.show', [
             'turniej' => $turniej,

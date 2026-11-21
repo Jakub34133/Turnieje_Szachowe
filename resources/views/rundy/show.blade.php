@@ -150,7 +150,18 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    @endif
 
+                    @if ($runda->wolnyLosZawodnik)
+                        <p class="px-4 pt-3 text-gray-300">
+                            Wolny los:
+                            <a href="{{ route('zawodnicy.show', [$runda->wolnyLosZawodnik]) }}" class="underline">
+                                {{ $runda->wolnyLosZawodnik->name }}
+                            </a>
+                        </p>
+                    @endif
+
+                    @if ($partie->isNotEmpty())
                         @if($runda->status === \App\Enums\RundaStatus::Przygotowana)
                             <form action="{{ route('rundy.begin', [$turniej, $runda]) }}" method="POST">
                                 @csrf

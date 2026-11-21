@@ -14,6 +14,7 @@ class Runda extends Model
         'numer',
         'status', // 'planowana', 'trwajaca', 'zakonczona'
         'data_rozpoczecia',
+        'wolny_los_zawodnik_id',
     ];
 
     protected function casts(): array
@@ -32,5 +33,10 @@ class Runda extends Model
     public function partie()
     {
         return $this->hasMany(Partia::class, 'runda_id');
+    }
+
+    public function wolnyLosZawodnik()
+    {
+        return $this->belongsTo(User::class, 'wolny_los_zawodnik_id');
     }
 }

@@ -62,6 +62,63 @@ class RundaTest extends TestCase
         $this->assertDatabaseCount('partie', 1);
     }
 
+    public function test_next_round_gives_a_bye_to_the_lowest_eligible_player_and_shows_them_below_pairs(): void
+    {
+        $organizator = User::factory()->create();
+        $turniej = $this->createTournament($organizator);
+        $players = User::factory()->count(3)->create();
+        $previousBye = $players[0];
+        $lowestStanding = $players[1];
+
+        foreach ([
+            [$previousBye, 2],
+            [$lowestStanding, 0],
+            [$players[2], 1],
+        ] as [$player, $points]) {
+            TurniejZawodnik::create([
+                'turniej_id' => $turniej->id,
+                'zawodnik_id' => $player->id,
+                'punkty' => $points,
+            ]);
+        }
+
+        Runda::create([
+            'turniej_id' => $turniej->id,
+            'numer' => 1,
+            'status' => RundaStatus::Zakonczona,
+            'wolny_los_zawodnik_id' => $previousBye->id,
+        ]);
+        $runda = Runda::create([
+            'turniej_id' => $turniej->id,
+            'numer' => 2,
+            'status' => RundaStatus::NieRozpoczeta,
+        ]);
+
+        $this->actingAs($organizator)
+            ->post(route('rundy.store', [$turniej, $runda]))
+            ->assertRedirect(route('rundy.show', [$turniej, $runda]));
+
+        $this->assertSame($lowestStanding->id, $runda->refresh()->wolnyLosZawodnik->id);
+        $this->assertSame(1, (int) TurniejZawodnik::where('turniej_id', $turniej->id)
+            ->where('zawodnik_id', $lowestStanding->id)
+            ->value('punkty'));
+        $this->assertDatabaseCount('partie', 1);
+        $this->assertDatabaseMissing('partie', [
+            'runda_id' => $runda->id,
+            'biale_zawodnik_id' => $lowestStanding->id,
+        ]);
+        $this->assertDatabaseMissing('partie', [
+            'runda_id' => $runda->id,
+            'czarne_zawodnik_id' => $lowestStanding->id,
+        ]);
+
+        $this->actingAs($organizator)
+            ->get(route('rundy.show', [$turniej, $runda]))
+            ->assertOk()
+            ->assertSee('Wolny los:')
+            ->assertSee($lowestStanding->name);
+    }
+
     public function test_round_page_displays_the_tournament_rounds_link_and_enum_status(): void
     {
         $organizator = User::factory()->create();
