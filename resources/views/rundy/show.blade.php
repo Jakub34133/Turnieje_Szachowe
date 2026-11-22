@@ -99,26 +99,27 @@
                     @if ($partie->isEmpty())
                         <p class="p-4 text-gray-300">W tej rundzie nie ma partii.</p>
                     @else
+                    <div class="m-4 glass">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Stolik</th>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-right">Białe</th>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300"></th>
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300 text-left">Czarne</th>
+                                <tr class="bg-main">
+                                    <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300 text-left">Stolik</th>
+                                    <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300 text-right">Białe</th>
+                                    <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300"></th>
+                                    <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300 text-left">Czarne</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($partie as $partia)
-                                    <tr>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                    <tr class="[&:last-child>*]:border-b-0" >
+                                        <td class="border-b border-gray-200/20 p-2 text-sm text-white text-left">
                                             {{ $partia->stolik }}</td>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-right">
+                                        <td class="border-b border-gray-200/20 p-2 text-sm text-white text-right">
                                             <a href="{{ route('zawodnicy.show', [$partia->bialeZawodnik]) }}">
                                                 {{ $partia->bialeZawodnik->name }}
                                             </a>
                                         </td>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-center">
+                                        <td class="border-b border-gray-200/20 p-2 text-sm text-white text-center">
                                             @if ($runda->status === \App\Enums\RundaStatus::Trwajaca)
                                                 @can('update', [$runda, $turniej])
                                                     <form
@@ -167,7 +168,7 @@
                                                 {{ $partia->czarne_wynik_punktowy?->label() ?? '—' }}
                                             @endif
                                         </td>
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white text-left">
+                                        <td class="border-b border-gray-200/20 p-2 text-sm text-white text-left">
                                             <a href="{{ route('zawodnicy.show', [$partia->czarneZawodnik]) }}">
                                                 {{ $partia->czarneZawodnik->name }}
                                             </a>
@@ -176,6 +177,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
                     @endif
 
                     @if ($runda->wolnyLosZawodnik)

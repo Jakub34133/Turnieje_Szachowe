@@ -50,7 +50,7 @@
                 <p class="p-2 m-2 grid items-center whitespace-nowrap overflow-x-auto glass-2 ">
                     <span
                         class="inline-flex items-center gap-1 text-main uppercase text-sm font-black"><flux:icon.user-circle
-                            class="text-main" /> Organizatorzy</span>
+                            class="text-main" /> Organizator</span>
                     <span class="inline-flex items-center gap-1">{{ $turniej->organizator?->name ?? 'Brak danych' }}</span>
                 </p>
 

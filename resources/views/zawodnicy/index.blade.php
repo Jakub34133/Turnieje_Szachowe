@@ -79,15 +79,16 @@
                         Jeszcze nie ma wyników dla tej rundy
                     </p>
                 @else
+                <div class="m-4 glass">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr>
-                                <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Miejsce</th>
-                                <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Zawodnik</th>
-                                <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Ranking PZSzach</th>
-                                <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Tytuł</th>
+                            <tr class="bg-main">
+                                <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300">Miejsce</th>
+                                <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300">Zawodnik</th>
+                                <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300">Ranking PZSzach</th>
+                                <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300">{{--Tytul--}}</th>
                                 @unless ($listaStartowa)
-                                    <th class="border-b border-gray-200 p-2 text-sm text-gray-300">Punkty</th>
+                                    <th class="border-b border-gray-200/20 p-2 text-sm text-gray-300">Punkty</th>
                                 @endunless
                             </tr>
                         </thead>
@@ -96,29 +97,30 @@
                                 $miejsce = 1;
                             @endphp
                             @foreach ($turniejZawodnik as $zawodnik)
-                                <tr
+                                <tr class="[&:last-child>*]:border-b-0"
                                     class="hover:bg-gray-700 {{ request('nazwa') && str_contains(strtolower($zawodnik->zawodnik->name), strtolower(request('nazwa'))) ? 'bg-gray-500' : '' }}">
-                                    <td class="border-b border-gray-200 p-2 text-sm text-white">{{ $miejsce++ }}</td>
-                                    <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                    <td class="border-b border-gray-200/20 p-2 text-sm text-white">{{ $miejsce++ }}</td>
+                                    <td class="border-b border-gray-200/20 p-2 text-sm text-white">
                                         <a href="{{ route('zawodnicy.show', $zawodnik->zawodnik) }}">
                                             {{ $zawodnik->zawodnik->name }}
                                         </a>
                                     </td>
-                                    <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                    <td class="border-b border-gray-200/20 p-2 text-sm text-white">
                                         {{ $zawodnik->zawodnik->pzszach_ranking }}</td>
-                                    <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                    <td class="border-b border-gray-200/20 p-2 text-sm text-white">
                                         {{ $zawodnik->zawodnik->tytul }}</td>
                                     @unless ($listaStartowa) {{-- if(false) --}}
-                                        <td class="border-b border-gray-200 p-2 text-sm text-white">
+                                        <td class="border-b border-gray-200/20 p-2 text-sm text-white">
                                             {{ floor($zawodnik->punkty_historia) }}
                                             {{ $zawodnik->punkty_historia != floor($zawodnik->punkty_historia) ? '½' : '' }}
                                         </td>
                                     @endunless
                                 </tr>
                             @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 @endif
-                </tbody>
-                </table>
             </div>
         </div>
     </div>
