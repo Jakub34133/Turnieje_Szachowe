@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -12,54 +13,69 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $existingUsers = [
+
+        // Utworzenie użytkowników z różnymi rolami
+        User::updateOrCreate(
+            ['email' => 'kuba@turnieje.pl'],
             [
                 'name' => 'Kuba',
-                'email' => 'kuba@turnieje.pl',
                 'password' => 'kuba1234',
                 'pzszach_ranking' => 1600,
                 'plec' => 'M',
-                'data_urodzenia' => '2003-10-24',
+                'data_urodzenia' => '2003-11-11',
                 'pzszach_id' => '151421',
-            ],
-            [
-                'name' => 'Adam',
-                'email' => 'adam@turnieje.pl',
-                'password' => 'adam1234',
-                'pzszach_ranking' => 1400,
-                'plec' => 'M',
-                'data_urodzenia' => '2002-11-03',
-            ],
-            [
-                'name' => 'Tomasz',
-                'email' => 'tomasz@turnieje.pl',
-                'password' => 'tomasz1234',
-                'pzszach_ranking' => 1624,
-                'plec' => 'M',
-                'data_urodzenia' => '2005-05-05',
-            ],
-            [
-                'name' => 'Alicja',
-                'email' => 'alicja@turnieje.pl',
-                'password' => 'alicja1234',
-                'pzszach_ranking' => 0,
-                'plec' => 'K',
-                'data_urodzenia' => '2006-10-10',
-            ],
-            [
-                'name' => 'Marek',
-                'email' => 'marek@turnieje.pl',
-                'password' => 'marek1234',
-                'pzszach_ranking' => 0,
-                'plec' => 'M',
-                'data_urodzenia' => '1995-12-06',
-            ],
-        ];
+            ]
+        )
+            ->assignRole(RoleEnum::Administrator)
+            ->assignRole(RoleEnum::Organizator)
+            ->assignRole(RoleEnum::Sedzia)
+            ->assignRole(RoleEnum::Zawodnik);
 
-        foreach ($existingUsers as $user) {
-            User::query()->updateOrCreate(['email' => $user['email']], $user);
-        }
+        User::updateOrCreate(
+            ['email' => 'admin@turnieje.pl'],
+            [
+                'name' => 'Administrator Test',
+                'password' => 'admin1234',
+                'plec' => 'M',
+                'data_urodzenia' => '2000-01-01',
+            ]
+        )
+            ->assignRole(RoleEnum::Administrator);
 
+        User::updateOrCreate(
+            ['email' => 'organizator@turnieje.pl'],
+            [
+                'name' => 'Organizator Test',
+                'password' => 'organizator1234',
+                'plec' => 'M',
+                'data_urodzenia' => '2000-01-01',
+            ]
+        )
+            ->assignRole(RoleEnum::Organizator);
+
+        User::updateOrCreate(
+            ['email' => 'sedzia@turnieje.pl'],
+            [
+                'name' => 'Sedzia Test',
+                'password' => 'sedzia1234',
+                'plec' => 'M',
+                'data_urodzenia' => '2000-01-01',
+            ]
+        )
+            ->assignRole(RoleEnum::Sedzia);
+
+        User::updateOrCreate(
+            ['email' => 'zawodnik@turnieje.pl'],
+            [
+                'name' => 'Zawodnik Test',
+                'password' => 'zawodnik1234',
+                'plec' => 'M',
+                'data_urodzenia' => '2000-01-01',
+            ]
+        )
+            ->assignRole(RoleEnum::Zawodnik);
+
+        // kolejne 20 losowych użytkowników
         for ($number = 6; $number <= 20; $number++) {
             $faker = fake();
 
@@ -78,7 +94,7 @@ class UserSeeder extends Seeder
                     'fide_id' => $faker->optional(0.6)->numerify('########'),
                     'klubowicz' => $faker->boolean(),
                 ]
-            );
+            )->assignRole(RoleEnum::Zawodnik);
         }
     }
 }

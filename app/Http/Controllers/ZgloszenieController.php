@@ -7,6 +7,7 @@ use App\Models\TurniejZawodnik;
 use App\Models\Zgloszenie;
 use App\Models\ZgloszenieStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ZgloszenieController extends Controller
 {
@@ -15,12 +16,14 @@ class ZgloszenieController extends Controller
      */
     public function index(Turniej $turniej)
     {
+        Gate::authorize('viewAny', [Zgloszenie::class, $turniej]);
+
         $request = request();
         $zgloszenia = $turniej->zgloszenia()->with(['zawodnik', 'status'])
             ->when($request->filled('nazwa'), function ($query) use ($request) {
                 $query->where(function ($q) use ($request) {
                     $q->whereHas('zawodnik', function ($q2) use ($request) {
-                        $q2->where('name', 'like', '%' . $request->input('nazwa') . '%');
+                        $q2->where('name', 'like', '%'.$request->input('nazwa').'%');
                     });
                 });
             })
@@ -28,9 +31,8 @@ class ZgloszenieController extends Controller
                 $query->where('status_id', $request->input('status_id'));
             })
             ->orderBy('data_wyslania', 'desc')
-            ->get();;
-        
-        
+            ->get();
+
         $zgloszenia_statusy = ZgloszenieStatus::all();
 
         return view('zgloszenia.index', [
@@ -45,8 +47,11 @@ class ZgloszenieController extends Controller
      */
     public function create(Turniej $turniej)
     {
+        Gate::authorize('create', [Zgloszenie::class, $turniej]);
+
         // sprawdz czy zalogowany uzytkownik złożył zgłoszenie, które ma status wysłane lub zatwierdzone
-        $zgloszenie = Zgloszenie::where('zawodnik_id', '=', auth()->id())
+        $zgloszenie = Zgloszenie::with('status')
+            ->where('zawodnik_id', '=', auth()->id())
             ->where('turniej_id', '=', $turniej->id)
             ->orderBy('data_wyslania', 'desc')
             ->first();
@@ -60,20 +65,25 @@ class ZgloszenieController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Turniej $turniej)
     {
+        Gate::authorize('create', [Zgloszenie::class, $turniej]);
+
         $validatedData = $request->validate([
             'komentarz' => 'nullable|string',
         ]);
 
         $validatedData['zawodnik_id'] = auth()->id(); // dodanie obecnego użytkownika jako zawodnika
-        $validatedData['status_id'] = 1; // ustawienie statusu na wysłane (1)
+        $validatedData['status_id'] = ZgloszenieStatus::query()
+            ->where('nazwa', 'wysłane')
+            ->firstOrFail()
+            ->getKey();
         $validatedData['data_wyslania'] = now(); // obecna data i czas
-        $validatedData['turniej_id'] = $request->turniej; // dodanie turniej_id do danych walidowanych
+        $validatedData['turniej_id'] = $turniej->getKey();
 
         Zgloszenie::create($validatedData);
 
-        return redirect()->route('turnieje.show', $request->turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
+        return redirect()->route('turnieje.show', $turniej)->with('success', 'Zgłoszenie zostało dodane pomyślnie.');
     }
 
     /**
@@ -110,11 +120,16 @@ class ZgloszenieController extends Controller
 
     public function approve(Turniej $turniej, Zgloszenie $zgloszenie)
     {
-        if($turniej->liczba_zawodnikow >= $turniej->limit_zawodnikow) {
+        Gate::authorize('update', [$zgloszenie, $turniej]);
+
+        if ($turniej->liczba_zawodnikow >= $turniej->limit_zawodnikow) {
             return redirect()->back()->with('error', 'Limit zawodników dla tego turnieju został osiągnięty.');
         }
 
-        $zgloszenie->status_id = 2; // ustawienie statusu na zatwierdzone (2)
+        $zgloszenie->status_id = ZgloszenieStatus::query()
+            ->where('nazwa', 'zatwierdzone')
+            ->firstOrFail()
+            ->getKey();
         $zgloszenie->save();
 
         $turniej->liczba_zawodnikow += 1; // zwiększenie liczby zawodników w turnieju
@@ -131,7 +146,12 @@ class ZgloszenieController extends Controller
 
     public function reject(Turniej $turniej, Zgloszenie $zgloszenie)
     {
-        $zgloszenie->status_id = 3; // ustawienie statusu na odrzucone (3)
+        Gate::authorize('update', [$zgloszenie, $turniej]);
+
+        $zgloszenie->status_id = ZgloszenieStatus::query()
+            ->where('nazwa', 'odrzucone')
+            ->firstOrFail()
+            ->getKey();
         $zgloszenie->save();
 
         return redirect()->back()->with('success', 'Zgłoszenie zostało odrzucone.');

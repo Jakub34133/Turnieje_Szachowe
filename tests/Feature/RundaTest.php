@@ -3,17 +3,20 @@
 namespace Tests\Feature;
 
 use App\Enums\RodzajSzachow;
+use App\Enums\RoleEnum;
 use App\Enums\RundaStatus;
 use App\Enums\WynikPunktowyPartii;
 use App\Models\Partia;
 use App\Models\Runda;
 use App\Models\Turniej;
+use App\Models\TurniejSedzia;
 use App\Models\TurniejStatus;
 use App\Models\TurniejZawodnik;
 use App\Models\TurniejZawodnikHistoria;
 use App\Models\User;
 use Database\Seeders\RundaSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class RundaTest extends TestCase
@@ -62,6 +65,63 @@ class RundaTest extends TestCase
         $this->assertDatabaseCount('partie', 1);
     }
 
+    public function test_next_round_gives_a_bye_to_the_lowest_eligible_player_and_shows_them_below_pairs(): void
+    {
+        $organizator = User::factory()->create();
+        $turniej = $this->createTournament($organizator);
+        $players = User::factory()->count(3)->create();
+        $previousBye = $players[0];
+        $lowestStanding = $players[1];
+
+        foreach ([
+            [$previousBye, 2],
+            [$lowestStanding, 0],
+            [$players[2], 1],
+        ] as [$player, $points]) {
+            TurniejZawodnik::create([
+                'turniej_id' => $turniej->id,
+                'zawodnik_id' => $player->id,
+                'punkty' => $points,
+            ]);
+        }
+
+        Runda::create([
+            'turniej_id' => $turniej->id,
+            'numer' => 1,
+            'status' => RundaStatus::Zakonczona,
+            'wolny_los_zawodnik_id' => $previousBye->id,
+        ]);
+        $runda = Runda::create([
+            'turniej_id' => $turniej->id,
+            'numer' => 2,
+            'status' => RundaStatus::NieRozpoczeta,
+        ]);
+
+        $this->actingAs($organizator)
+            ->post(route('rundy.store', [$turniej, $runda]))
+            ->assertRedirect(route('rundy.show', [$turniej, $runda]));
+
+        $this->assertSame($lowestStanding->id, $runda->refresh()->wolnyLosZawodnik->id);
+        $this->assertSame(1, (int) TurniejZawodnik::where('turniej_id', $turniej->id)
+            ->where('zawodnik_id', $lowestStanding->id)
+            ->value('punkty'));
+        $this->assertDatabaseCount('partie', 1);
+        $this->assertDatabaseMissing('partie', [
+            'runda_id' => $runda->id,
+            'biale_zawodnik_id' => $lowestStanding->id,
+        ]);
+        $this->assertDatabaseMissing('partie', [
+            'runda_id' => $runda->id,
+            'czarne_zawodnik_id' => $lowestStanding->id,
+        ]);
+
+        $this->actingAs($organizator)
+            ->get(route('rundy.show', [$turniej, $runda]))
+            ->assertOk()
+            ->assertSee('Wolny los:')
+            ->assertSee($lowestStanding->name);
+    }
+
     public function test_round_page_displays_the_tournament_rounds_link_and_enum_status(): void
     {
         $organizator = User::factory()->create();
@@ -76,6 +136,7 @@ class RundaTest extends TestCase
             ->get(route('rundy.show', $turniej))
             ->assertOk()
             ->assertSee('Nie rozpoczęta')
+            ->assertSee('flex-nowrap overflow-x-auto')
             ->assertSee(route('rundy.show', $turniej));
 
         $this->assertSame(RodzajSzachow::Klasyczne, $turniej->refresh()->rodzaj_szachow);
@@ -284,6 +345,68 @@ class RundaTest extends TestCase
         $this->assertSame(0, (int) TurniejZawodnik::where('turniej_id', $turniej->id)->sum('punkty'));
     }
 
+    public function test_only_the_tournament_organizer_or_assigned_referee_can_manage_rounds(): void
+    {
+        $organizer = User::factory()->create();
+        $turniej = $this->createTournament($organizer);
+        $otherTurniej = $this->createTournament($organizer);
+        $runda = Runda::create([
+            'turniej_id' => $turniej->id,
+            'numer' => 1,
+            'status' => RundaStatus::NieRozpoczeta,
+        ]);
+        $players = User::factory()->count(2)->create();
+
+        foreach ($players as $player) {
+            TurniejZawodnik::create([
+                'turniej_id' => $turniej->id,
+                'zawodnik_id' => $player->id,
+            ]);
+        }
+
+        $referee = User::factory()->create();
+        $referee->assignRole(Role::findOrCreate(RoleEnum::Sedzia->value, 'web'));
+        TurniejSedzia::create([
+            'turniej_id' => $otherTurniej->id,
+            'sedzia_id' => $referee->id,
+        ]);
+
+        $this->actingAs($referee)
+            ->post(route('rundy.store', [$turniej, $runda]))
+            ->assertForbidden();
+
+        $this->actingAs($organizer)
+            ->post(route('rundy.store', [$turniej, $runda]))
+            ->assertRedirect(route('rundy.show', [$turniej, $runda]));
+
+        $this->actingAs($referee)
+            ->patch(route('rundy.begin', [$turniej, $runda]))
+            ->assertForbidden();
+
+        TurniejSedzia::create([
+            'turniej_id' => $turniej->id,
+            'sedzia_id' => $referee->id,
+        ]);
+
+        $this->actingAs($referee)
+            ->patch(route('rundy.begin', [$turniej, $runda]))
+            ->assertRedirect(route('rundy.show', [$turniej, $runda]));
+
+        $viewer = User::factory()->create();
+
+        $this->actingAs($viewer)
+            ->get(route('rundy.show', [$turniej, $runda]))
+            ->assertOk()
+            ->assertSee('Pary rundy')
+            ->assertDontSee('name="biale_wynik_punktowy"', false)
+            ->assertDontSee('Zatwierdź wyniki i zakończ rundę');
+
+        $this->actingAs($referee)
+            ->get(route('rundy.show', [$turniej, $runda]))
+            ->assertOk()
+            ->assertSee('Zatwierdź wyniki i zakończ rundę');
+    }
+
     public function test_finishing_a_round_adds_all_game_points_and_marks_the_round_complete(): void
     {
         $organizator = User::factory()->create();
@@ -396,7 +519,8 @@ class RundaTest extends TestCase
 
     private function createTournament(User $organizator): Turniej
     {
-        $status = TurniejStatus::create(['nazwa' => 'Planowany']);
+        $organizator->assignRole(Role::findOrCreate(RoleEnum::Organizator->value, 'web'));
+        $status = TurniejStatus::firstOrCreate(['nazwa' => 'Planowany']);
 
         return Turniej::create([
             'organizator_id' => $organizator->id,

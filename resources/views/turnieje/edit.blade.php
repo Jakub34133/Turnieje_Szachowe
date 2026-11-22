@@ -5,23 +5,28 @@
 {{-- zawartość --}}
 <x-layouts::app :title="__('Edytuj turniej szachowy')">
     <div class="p-4 flex w-full flex-1 flex-col">
-        <div class="grid w-full grid-cols-5">
-            <a href="{{ route('turnieje.show', $turniej) }}" class="glass-off p-2">
+
+        <nav class="flex w-full flex-nowrap overflow-x-auto">
+            <a href="{{ route('turnieje.show', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
                 Komunikat
             </a>
-            <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off p-2">
+            <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off grow whitespace-nowrap p-2">
                 Wyniki
             </a>
-            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off p-2">
+            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
                 Rundy
             </a>
-            <a href="{{ route('turnieje.edit', $turniej) }}" class="glass p-2" style="border-bottom: none">
-                Edytuj turniej
-            </a>
-            <a href="{{ route('turnieje.zgloszenia.index', $turniej) }}" class="glass-off p-2">
-                Zgłoszenia
-            </a>
-        </div>
+            @can('update', $turniej)
+                <a href="{{ route('turnieje.edit', $turniej) }}" class="glass grow whitespace-nowrap p-2" style="border-bottom: none">
+                    Edytuj turniej
+                </a>
+            @endcan
+            @can('viewAny', [\App\Models\Zgloszenie::class, $turniej])
+                <a href="{{ route('turnieje.zgloszenia.index', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
+                    Zgłoszenia
+                </a>
+            @endcan
+        </nav>
 
         <div class="p-4 flex w-full flex-1 flex-col glass" style="border-top: none;">
 
@@ -323,20 +328,21 @@
                     </div>
                 </form>
 
-                <div
-                    class="w-[50%] absolute left-0 bottom-0 grid grid-cols-2 gap-3 m-2 justify-end items-center whitespace-nowrap overflow-x-auto">
-
-                    <form action="{{ route('turnieje.destroy', $turniej) }}" method="POST"
-                        enctype="multipart/form-data"
-                        onsubmit="return confirm('Czy na pewno chcesz usunąć ten turniej?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="w-full p-2 cursor-pointer bg-red-500 hover:bg-red-600 duration-200">
-                            Usuń turniej
-                        </button>
-                    </form>
-                </div>
+                @can('delete', $turniej)
+                    <div
+                        class="w-[50%] absolute left-0 bottom-0 grid grid-cols-2 gap-3 m-2 justify-end items-center whitespace-nowrap overflow-x-auto">
+                        <form action="{{ route('turnieje.destroy', $turniej) }}" method="POST"
+                            enctype="multipart/form-data"
+                            onsubmit="return confirm('Czy na pewno chcesz usunąć ten turniej?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="w-full p-2 cursor-pointer bg-red-500 hover:bg-red-600 duration-200">
+                                Usuń turniej
+                            </button>
+                        </form>
+                    </div>
+                @endcan
             </div>
 
         </div>

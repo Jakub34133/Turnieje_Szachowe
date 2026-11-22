@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Turniej;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\TurniejStatus;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class TurniejSeeder extends Seeder
@@ -13,9 +14,22 @@ class TurniejSeeder extends Seeder
      */
     public function run(): void
     {
+        $organizatorId = User::query()
+            ->where('email', 'kuba@turnieje.pl')
+            ->firstOrFail()
+            ->getKey();
+        $planowanyStatusId = TurniejStatus::query()
+            ->where('nazwa', 'Planowany')
+            ->firstOrFail()
+            ->getKey();
+        $zakonczonyStatusId = TurniejStatus::query()
+            ->where('nazwa', 'Zakończony')
+            ->firstOrFail()
+            ->getKey();
+
         Turniej::create([
-            'organizator_id' => 1,
-            'status_id' => 1, // Planowany
+            'organizator_id' => $organizatorId,
+            'status_id' => $planowanyStatusId,
             'nazwa' => 'XVII DGCS OPEN Mistrzostwa Polski Przedsiębiorców BURSZTYNOWA I',
             'liczba_rund' => 7,
             'miejsce' => 'Technikum im. św. Józefa w Kaliszu ul. Złota 144a',
@@ -29,8 +43,8 @@ class TurniejSeeder extends Seeder
         ]);
 
         Turniej::create([
-            'organizator_id' => 1,
-            'status_id' => 3, // Zakończony
+            'organizator_id' => $organizatorId,
+            'status_id' => $zakonczonyStatusId,
             'nazwa' => 'X Ogólnopolski Turniej Szachowy o Puchar Prezydenta Miasta Kalisza (gr. A)',
             'liczba_rund' => 5,
             'miejsce' => 'SP 8 Kalisz (ul. Serbinowska 22A)',
@@ -46,8 +60,8 @@ class TurniejSeeder extends Seeder
         ]);
 
         Turniej::create([
-            'organizator_id' => 1,
-            'status_id' => 3, // Zakończony
+            'organizator_id' => $organizatorId,
+            'status_id' => $zakonczonyStatusId,
             'nazwa' => 'X Ogólnopolski Turniej Szachowy o Puchar Prezydenta Miasta Kalisza (gr. B)',
             'liczba_rund' => 7,
             'miejsce' => 'SP 8 Kalisz (ul. Serbinowska 22A)',
@@ -63,8 +77,8 @@ class TurniejSeeder extends Seeder
         ]);
 
         Turniej::create([
-            'organizator_id' => 1,
-            'status_id' => 3, // Zakończony
+            'organizator_id' => $organizatorId,
+            'status_id' => $zakonczonyStatusId,
             'nazwa' => 'X Ogólnopolski Turniej Szachowy o Puchar Prezydenta Miasta Kalisza (gr. C)',
             'liczba_rund' => 7,
             'miejsce' => 'SP 8 Kalisz (ul. Serbinowska 22A)',

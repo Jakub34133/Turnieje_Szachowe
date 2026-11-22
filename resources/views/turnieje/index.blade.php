@@ -4,9 +4,11 @@
 
             <div class="flex justify-between">
                 <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">Turnieje Szachowe</h1>
-                <flux:button href="{{ route('turnieje.create') }}" class="mt-2" icon="plus">
-                    {{ __('Utwórz turniej') }}
-                </flux:button>
+                @can('create', \App\Models\Turniej::class)
+                    <flux:button href="{{ route('turnieje.create') }}" class="mt-2" icon="plus">
+                        {{ __('Utwórz turniej') }}
+                    </flux:button>
+                @endcan
             </div>
 
             <form action="{{ route('turnieje.index') }}" method="GET">

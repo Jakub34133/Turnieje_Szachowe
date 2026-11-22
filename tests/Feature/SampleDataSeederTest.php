@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Turniej;
 use App\Models\User;
 use App\Models\Zgloszenie;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\TurniejSeeder;
 use Database\Seeders\TurniejStatusSeeder;
 use Database\Seeders\UserSeeder;
@@ -20,6 +21,7 @@ class SampleDataSeederTest extends TestCase
     public function test_seeders_create_twenty_users_and_ten_unique_applications_per_tournament(): void
     {
         $this->seed([
+            RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             TurniejStatusSeeder::class,
             TurniejSeeder::class,

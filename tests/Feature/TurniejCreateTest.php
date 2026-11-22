@@ -9,6 +9,7 @@ use App\Models\Turniej;
 use App\Models\TurniejStatus;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class TurniejCreateTest extends TestCase
@@ -18,6 +19,7 @@ class TurniejCreateTest extends TestCase
     public function test_create_form_contains_and_saves_tournament_fields(): void
     {
         $user = User::factory()->create();
+        $user->assignRole(Role::findOrCreate('Organizator', 'web'));
         $status = TurniejStatus::create(['nazwa' => 'Planowany']);
 
         $this->actingAs($user)
@@ -74,6 +76,7 @@ class TurniejCreateTest extends TestCase
     public function test_create_rejects_reversed_ranking_limits(): void
     {
         $user = User::factory()->create();
+        $user->assignRole(Role::findOrCreate('Organizator', 'web'));
         $status = TurniejStatus::create(['nazwa' => 'Planowany']);
 
         $this->actingAs($user)

@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
+            RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             TytulSeeder::class,
             TurniejStatusSeeder::class,
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ZgloszenieStatusSeeder::class,
             ZgloszenieSeeder::class,
             TurniejZawodnikSeeder::class,
+            TurniejSedziaSeeder::class
         ]);
 
     }

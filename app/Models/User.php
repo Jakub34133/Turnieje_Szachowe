@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 // TODO: Tabele profilowe zawodnik_profil, sedzia_profil itp.
 #[Fillable(
@@ -28,6 +29,7 @@ class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable;
+    use HasRoles;
 
     /**
      * Get the attributes that should be cast.
