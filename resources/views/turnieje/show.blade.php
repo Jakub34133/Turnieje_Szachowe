@@ -18,23 +18,27 @@
 
     <div class="p-4 flex w-full flex-1 flex-col">
 
-        <div class="grid w-full grid-cols-5">
-            <a href="{{ route('turnieje.show', $turniej) }}" class="glass p-2" style="border-bottom: none">
+        <nav class="flex w-full flex-nowrap overflow-x-auto">
+            <a href="{{ route('turnieje.show', $turniej) }}" class="glass grow whitespace-nowrap p-2" style="border-bottom: none">
                 Komunikat
             </a>
-            <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off p-2">
+            <a href="{{ route('zawodnicy.index', [$turniej]) }}" class="glass-off grow whitespace-nowrap p-2">
                 Wyniki
             </a>
-            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off p-2">
+            <a href="{{ route('rundy.show', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
                 Rundy
             </a>
-            <a href="{{ route('turnieje.edit', $turniej) }}" class="glass-off p-2">
-                Edytuj turniej
-            </a>
-            <a href="{{ route('turnieje.zgloszenia.index', $turniej) }}" class="glass-off p-2">
-                Zgłoszenia
-            </a>
-        </div>
+            @can('update', $turniej)
+                <a href="{{ route('turnieje.edit', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
+                    Edytuj turniej
+                </a>
+            @endcan
+            @can('viewAny', [\App\Models\Zgloszenie::class, $turniej])
+                <a href="{{ route('turnieje.zgloszenia.index', $turniej) }}" class="glass-off grow whitespace-nowrap p-2">
+                    Zgłoszenia
+                </a>
+            @endcan
+        </nav>
         <div class="p-4 flex w-full flex-1 flex-col glass" style="border-top: none;">
 
             <h1 class="m-2 p-2 text-2xl font-bold tracking-tight">{{ $turniej->nazwa }}</h1>
@@ -210,18 +214,20 @@
                         class="inline-flex items-center gap-1">{{ $turniej->limit_klub ? 'Tak' : 'Nie' }}</span>
                 </p>
 
-                <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data" class="m-2">
+                @can('create', [\App\Models\Zgloszenie::class, $turniej])
+                    <form action="{{ route('turnieje.zgloszenia.store', $turniej) }}" method="POST" enctype="multipart/form-data" class="m-2">
                     @csrf
                     @method('POST')
 
-                    @if($zgloszenie != null && $zgloszenie->status_id == 1)
+                    @if($zgloszenie?->status?->nazwa === 'wysłane')
                         <input type="submit" disabled value="Zgłoszenie oczekuje na potwierdzenie" class="w-full h-full items-center whitespace-wrap bg-main/20 " />
-                    @elseif($zgloszenie != null && $zgloszenie->status_id == 2)
+                    @elseif($zgloszenie?->status?->nazwa === 'zatwierdzone')
                         <input type="submit" disabled value="Już uczestniczysz w tym turnieju" class="w-full h-full items-center whitespace-wrap bg-main/20 " />
                     @else
                         <input type="submit" value="Zgłoś się" class="w-full h-full p-0 m-0 grid  items-center whitespace-nowrap overflow-x-auto bg-main cursor-pointer hover:bg-main/80 duration-200" />
                     @endif
-                </form>
+                    </form>
+                @endcan
             </div>
         </div>
     </div>

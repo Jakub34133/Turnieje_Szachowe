@@ -9,6 +9,7 @@ use App\Models\Turniej;
 use App\Models\TurniejStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -43,6 +44,8 @@ class TurniejController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Turniej::class);
+
         $turniej_statusy = TurniejStatus::all();
 
         return view('turnieje.create', [
@@ -55,6 +58,8 @@ class TurniejController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Turniej::class);
+
         // dodanie danych z formularza
         $validatedData = $request->validate([
             'nazwa' => 'required|string|max:255',
@@ -128,7 +133,10 @@ class TurniejController extends Controller
      */
     public function show(Turniej $turniej)
     {
-        $zgloszenie = $turniej->zgloszenia()->where('zawodnik_id', auth()->id())->first();
+        $zgloszenie = $turniej->zgloszenia()
+            ->with('status')
+            ->where('zawodnik_id', auth()->id())
+            ->first();
 
         return view('turnieje.show', [
             'turniej' => $turniej,
@@ -141,6 +149,8 @@ class TurniejController extends Controller
      */
     public function edit(Turniej $turniej)
     {
+        Gate::authorize('update', $turniej);
+
         $turniej_statusy = TurniejStatus::all();
 
         return view('turnieje.edit', [
@@ -154,6 +164,8 @@ class TurniejController extends Controller
      */
     public function update(Request $request, Turniej $turniej)
     {
+        Gate::authorize('update', $turniej);
+
         // pobranie nowych danych z formularza
         $validatedData = $request->validate([
             'nazwa' => 'required|string|max:255',
@@ -246,6 +258,8 @@ class TurniejController extends Controller
      */
     public function destroy(Turniej $turniej)
     {
+        Gate::authorize('delete', $turniej);
+
         // usunięcie pliku z komunikatem, jeśli istnieje
         if ($turniej->komunikat_path) {
             Storage::disk('public')->delete($turniej->komunikat_path);

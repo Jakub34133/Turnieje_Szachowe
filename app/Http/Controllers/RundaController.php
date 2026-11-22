@@ -10,6 +10,7 @@ use App\Models\Turniej;
 use App\Models\TurniejZawodnik;
 use App\Models\TurniejZawodnikHistoria;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class RundaController extends Controller
 {
@@ -34,6 +35,8 @@ class RundaController extends Controller
      */
     public function store(Turniej $turniej, Runda $runda)
     {
+        Gate::authorize('update', [$runda, $turniej]);
+
         abort_unless($runda->turniej_id === $turniej->id, 404);
 
         $poprzedniaRunda = $this->poprzedniaRunda($turniej, $runda);
@@ -182,6 +185,8 @@ class RundaController extends Controller
 
     public function begin(Turniej $turniej, Runda $runda)
     {
+        Gate::authorize('update', [$runda, $turniej]);
+
         abort_unless($runda->turniej_id === $turniej->id, 404);
 
         $poprzedniaRunda = $this->poprzedniaRunda($turniej, $runda);
@@ -199,6 +204,8 @@ class RundaController extends Controller
 
     public function finish(Turniej $turniej, Runda $runda)
     {
+        Gate::authorize('update', [$runda, $turniej]);
+
         abort_unless($runda->turniej_id === $turniej->id, 404);
 
         $error = DB::transaction(function () use ($turniej, $runda) {

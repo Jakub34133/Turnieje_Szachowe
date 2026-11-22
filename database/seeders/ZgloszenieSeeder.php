@@ -16,13 +16,12 @@ class ZgloszenieSeeder extends Seeder
     public function run(): void
     {
         // Przypisanie po 10 losowych zawodników do istniejących turniejów
-        $statusIds = ZgloszenieStatus::query()->pluck('id')->all();
+        $statusId = ZgloszenieStatus::query()
+            ->where('nazwa', 'wysłane')
+            ->firstOrFail()
+            ->getKey();
 
-        if ($statusIds === []) {
-            throw new RuntimeException('Najpierw należy zasiać statusy zgłoszeń.');
-        }
-
-        Turniej::query()->each(function (Turniej $turniej) use ($statusIds): void {
+        Turniej::query()->each(function (Turniej $turniej) use ($statusId): void {
             $existingPlayerIds = $turniej->zgloszenia()->pluck('zawodnik_id');
             $needed = max(0, 10 - $existingPlayerIds->count());
 
@@ -31,6 +30,7 @@ class ZgloszenieSeeder extends Seeder
             }
 
             $zawodnicy = User::query()
+                ->where('id', '>', 5)
                 ->where('id', '!=', $turniej->organizator_id)
                 ->whereNotIn('id', $existingPlayerIds)
                 ->inRandomOrder()
@@ -44,7 +44,7 @@ class ZgloszenieSeeder extends Seeder
             foreach ($zawodnicy as $zawodnik) {
                 $turniej->zgloszenia()->create([
                     'zawodnik_id' => $zawodnik->id,
-                    'status_id' => 1,
+                    'status_id' => $statusId,
                     'data_wyslania' => fake()->dateTimeBetween(
                         $turniej->data_rozpoczecia,
                         $turniej->data_zakonczenia

@@ -4,15 +4,15 @@
 <x-layouts::app :title="__('Dodaj zgłoszenie')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
 
-        @if($zgloszenie != null && $zgloszenie->status_id == 1)
+        @if($zgloszenie?->status?->nazwa === 'wysłane')
             <div class="mx-4 rounded-lg border border-emerald-500 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
                 Twoje zgłoszenie zostało wysłane
             </div>
-        @elseif($zgloszenie != null && $zgloszenie->status_id == 2)
+        @elseif($zgloszenie?->status?->nazwa === 'zatwierdzone')
             <div class="mx-4 rounded-lg border border-emerald-500 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
                 Już uczestniczysz w tym turnieju
             </div>
-        @else
+        @elseif (auth()->user()->can('create', [\App\Models\Zgloszenie::class, $turniej]))
             <div class="px-4 flex items-center justify-between mx-auto">
                 <h1 class="text-2xl font-bold tracking-tight center">Dodaj zgłoszenie do turnieju</h1>
             </div>

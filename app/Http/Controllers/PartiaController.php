@@ -9,6 +9,7 @@ use App\Models\Runda;
 use App\Models\Turniej;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class PartiaController extends Controller
@@ -58,6 +59,8 @@ class PartiaController extends Controller
      */
     public function update(Request $request, Turniej $turniej, Runda $runda, Partia $partia)
     {
+        Gate::authorize('update', [$runda, $turniej]);
+
         $validated = $request->validate([
             'biale_wynik_punktowy' => ['sometimes', 'nullable', Rule::enum(WynikPunktowyPartii::class)],
             'czarne_wynik_punktowy' => ['sometimes', 'nullable', Rule::enum(WynikPunktowyPartii::class)],
